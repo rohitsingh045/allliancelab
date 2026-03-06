@@ -49,9 +49,14 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Alliance Health Hub API is running" });
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Only listen when not running on Vercel (serverless)
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+export default app;
 
 server.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
