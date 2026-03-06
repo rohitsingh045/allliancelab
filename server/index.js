@@ -77,15 +77,3 @@ if (process.env.VERCEL !== "1") {
 }
 
 export default app;
-
-server.on("error", (err) => {
-  if (err.code === "EADDRINUSE") {
-    console.log(`Port ${PORT} is busy, trying port ${+PORT + 1}...`);
-    server.close();
-    app.listen(+PORT + 1, () => {
-      console.log(`Server running on port ${+PORT + 1}`);
-    });
-  } else {
-    console.error(err);
-  }
-});
