@@ -69,7 +69,7 @@ const TestsSection = () => {
             Popular Diagnostic Tests
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto">
-            NABL accredited lab with 99.9% accuracy. Get reports in just 6-24 hours.
+            Trusted lab with 99.9% accuracy. Get reports in just 6-24 hours.
           </p>
         </div>
 

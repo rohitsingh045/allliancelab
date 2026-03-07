@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { createBooking } from "@/api/client.js";
+import { toast } from "sonner";
 import heroBanner from "@/assets/hero-family.jpg";
 
 const HeroSection = () => {
@@ -18,9 +19,10 @@ const HeroSection = () => {
       await createBooking(formData);
       setSubmitted(true);
       setFormData({ name: "", phone: "", city: "Mumbai" });
+      toast.success("Booking received! We'll call you shortly.");
       setTimeout(() => setSubmitted(false), 3000);
     } catch (err) {
-      console.error("Booking failed:", err);
+      toast.error("Booking failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -44,7 +46,7 @@ const HeroSection = () => {
           <div className="space-y-5 animate-fade-in-up">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-accent/30">
               <span className="w-2 h-2 rounded-full bg-accent animate-pulse-gentle" />
-              <span className="text-sm font-semibold text-accent">NABL Accredited Lab</span>
+              <span className="text-sm font-semibold text-accent">Trusted Diagnostic Lab</span>
             </div>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold leading-tight text-primary-foreground">
@@ -62,6 +64,10 @@ const HeroSection = () => {
             <Button
               size="lg"
               className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-base px-8 py-6 rounded-xl shadow-elevated"
+              onClick={() => {
+                const el = document.getElementById("health-packages");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
             >
               Explore Packages
               <ArrowRight className="w-5 h-5 ml-2" />

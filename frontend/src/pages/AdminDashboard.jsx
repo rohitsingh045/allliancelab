@@ -6,7 +6,7 @@ import {
   CheckCircle2, XCircle, ChevronDown, Search,
   Phone, Mail, Calendar, User as UserIcon, FlaskConical, Microscope,
   Activity, TestTubes, HeartPulse, Droplets, Upload, FileImage, Eye,
-  FileUp, Trash2, ClipboardCopy, Hash
+  FileUp, Trash2, ClipboardCopy, Hash, Home, MapPin
 } from "lucide-react";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -66,6 +66,8 @@ const AdminDashboard = () => {
   const [reportFile, setReportFile] = useState(null);
   const [uploadingAdminReport, setUploadingAdminReport] = useState(false);
   const [deletingReport, setDeletingReport] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [updatingBooking, setUpdatingBooking] = useState(null);
 
   const token = localStorage.getItem("auth_token");
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
@@ -98,11 +100,15 @@ const AdminDashboard = () => {
       setOrders(ordersData);
       setPrescriptions(rxData);
 
-      // Fetch reports separately so it doesn't block the dashboard
+      // Fetch reports and bookings separately so they don't block the dashboard
       try {
         const reportsRes = await fetch(`${API_BASE}/reports/admin/all`, { headers });
         if (reportsRes.ok) setAdminReports(await reportsRes.json());
       } catch { /* reports tab will just be empty */ }
+      try {
+        const bookingsRes = await fetch(`${API_BASE}/bookings`, { headers });
+        if (bookingsRes.ok) setBookings(await bookingsRes.json());
+      } catch { /* bookings tab will just be empty */ }
     } catch {
       navigate("/login");
     } finally {
@@ -286,6 +292,25 @@ const AdminDashboard = () => {
     }
   };
 
+  const updateBookingStatus = async (bookingId, status) => {
+    setUpdatingBooking(bookingId);
+    try {
+      const res = await fetch(`${API_BASE}/bookings/${bookingId}`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setBookings((prev) => prev.map((b) => (b._id === bookingId ? updated : b)));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUpdatingBooking(null);
+    }
+  };
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => alert("Unique ID copied: " + text)).catch(() => {});
   };
@@ -440,6 +465,16 @@ const AdminDashboard = () => {
             }`}
           >
             <FileUp className="w-3.5 h-3.5" /> Upload Reports ({adminReports.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("bookings")}
+            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-1.5 ${
+              activeTab === "bookings"
+                ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-md shadow-teal-200"
+                : "bg-white/80 backdrop-blur-sm text-teal-700 hover:bg-white border border-teal-100"
+            }`}
+          >
+            <Home className="w-3.5 h-3.5" /> Home Bookings ({bookings.length})
           </button>
           <button
             onClick={fetchData}
@@ -1183,6 +1218,100 @@ const AdminDashboard = () => {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Bookings Tab */}
+        {activeTab === "bookings" && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center">
+                <Home className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-800">Home Collection Bookings</h2>
+                <p className="text-xs text-teal-500">Manage home sample collection requests from patients</p>
+              </div>
+            </div>
+
+            {bookings.length === 0 ? (
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 p-10 text-center shadow-sm">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center mx-auto mb-3">
+                  <Home className="w-8 h-8 text-teal-300" />
+                </div>
+                <p className="text-slate-600 font-medium">No home collection bookings yet</p>
+                <p className="text-sm text-teal-400 mt-1">Bookings from the website will appear here</p>
+              </div>
+            ) : (
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 shadow-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-600">
+                      <tr>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">#</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Patient Name</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Phone</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">City</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Status</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Booked On</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-teal-50">
+                      {bookings.map((booking, idx) => (
+                        <tr key={booking._id} className="hover:bg-teal-50/50 transition-colors">
+                          <td className="px-5 py-3.5 text-teal-400 font-mono text-xs">{idx + 1}</td>
+                          <td className="px-5 py-3.5">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shrink-0">
+                                <UserIcon className="w-4 h-4 text-white" />
+                              </div>
+                              <span className="font-medium text-slate-700">{booking.name}</span>
+                            </div>
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <a href={`tel:${booking.phone}`} className="flex items-center gap-1 text-teal-600 hover:text-teal-800 font-medium">
+                              <Phone className="w-3.5 h-3.5" /> {booking.phone}
+                            </a>
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <span className="flex items-center gap-1 text-slate-600">
+                              <MapPin className="w-3.5 h-3.5 text-teal-400" /> {booking.city}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                              booking.status === "pending" ? "bg-amber-100 text-amber-800 border border-amber-200" :
+                              booking.status === "confirmed" ? "bg-sky-100 text-sky-800 border border-sky-200" :
+                              booking.status === "completed" ? "bg-emerald-100 text-emerald-800 border border-emerald-200" :
+                              "bg-rose-100 text-rose-800 border border-rose-200"
+                            }`}>
+                              {booking.status}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3.5 text-slate-500 text-xs">
+                            {new Date(booking.createdAt).toLocaleString()}
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <select
+                              value={booking.status}
+                              onChange={(e) => updateBookingStatus(booking._id, e.target.value)}
+                              disabled={updatingBooking === booking._id}
+                              className="px-2.5 py-1.5 rounded-lg border border-teal-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="confirmed">Confirmed</option>
+                              <option value="completed">Completed</option>
+                              <option value="cancelled">Cancelled</option>
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

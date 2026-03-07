@@ -8,14 +8,14 @@ import { useCart } from "@/context/CartContext";
 import logo from "@/assets/logo.png";
 
 const navItems = [
-  "Home Collection",
-  "Centre Visit",
-  "Health Packages",
-  "Health Conditions",
-  "Compare Packages",
-  "Create Your Package",
-  "About Us",
-  "Knowledge Hub",
+  { label: "Home Collection", type: "navigate", target: "/home-collection" },
+  { label: "Centre Visit", type: "navigate", target: "/centre-visit" },
+  { label: "Health Packages", type: "scroll", target: "health-packages" },
+  { label: "Health Conditions", type: "scroll", target: "health-conditions" },
+  { label: "Compare Packages", type: "navigate", target: "/compare-packages" },
+  { label: "Create Your Package", type: "navigate", target: "/create-package" },
+  { label: "About Us", type: "navigate", target: "/about-us" },
+  { label: "Knowledge Hub", type: "navigate", target: "/knowledge-hub" },
 ];
 
 const Header = () => {
@@ -27,6 +27,21 @@ const Header = () => {
   const { totalItems } = useCart();
   const navigate = useNavigate();
 
+  const handleNavClick = (item) => {
+    if (item.type === "navigate") {
+      navigate(item.target);
+    } else {
+      if (window.location.pathname !== "/") {
+        navigate("/");
+        setTimeout(() => {
+          document.getElementById(item.target)?.scrollIntoView({ behavior: "smooth" });
+        }, 300);
+      } else {
+        document.getElementById(item.target)?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-card border-b border-border">
       {/* Top bar */}
@@ -36,9 +51,12 @@ const Header = () => {
             Accurate Reports. Trusted Care.
           </p>
           <div className="hidden md:flex items-center gap-4">
-            <a href="#" className="text-sm text-primary-foreground opacity-80 hover:opacity-100 transition-opacity">
+            <button
+              onClick={() => navigate("/blogs")}
+              className="text-sm text-primary-foreground opacity-80 hover:opacity-100 transition-opacity"
+            >
               Blogs
-            </a>
+            </button>
             {user ? (
               <span className="text-sm text-primary-foreground opacity-90 font-medium">
                 Hi, {user.name}
@@ -62,9 +80,9 @@ const Header = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <div className="flex items-center gap-2 shrink-0">
+          <Link to="/" className="flex items-center gap-2 shrink-0">
             <img src={logo} alt="Alliance Diagnostic - Your Health Our Priority" className="h-10 md:h-12 w-auto" />
-          </div>
+          </Link>
 
           {/* Location selector */}
           <div className="hidden md:flex">
@@ -111,7 +129,7 @@ const Header = () => {
             )}
             {user ? (
               <Button
-                className="hidden md:flex bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold"
+                className="hidden md:flex bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold rounded-full"
                 onClick={logout}
               >
                 <LogOut className="w-4 h-4 mr-1" />
@@ -119,7 +137,7 @@ const Header = () => {
               </Button>
             ) : (
               <Button
-                className="hidden md:flex bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold"
+                className="hidden md:flex bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold rounded-full"
                 onClick={() => navigate("/login")}
               >
                 <User className="w-4 h-4 mr-1" />
@@ -141,13 +159,13 @@ const Header = () => {
         <div className="container mx-auto px-4">
           <ul className="flex items-center gap-0 overflow-x-auto scrollbar-hide">
             {navItems.map((item) => (
-              <li key={item}>
-                <a
-                  href="#"
+              <li key={item.label}>
+                <button
+                  onClick={() => handleNavClick(item)}
                   className="block px-3 lg:px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
                 >
-                  {item}
-                </a>
+                  {item.label}
+                </button>
               </li>
             ))}
           </ul>
@@ -176,10 +194,13 @@ const Header = () => {
             </button>
             <ul className="space-y-1">
               {navItems.map((item) => (
-                <li key={item}>
-                  <a href="#" className="block px-3 py-2.5 text-sm font-medium text-foreground hover:bg-secondary rounded-lg">
-                    {item}
-                  </a>
+                <li key={item.label}>
+                  <button
+                    onClick={() => { handleNavClick(item); setMobileOpen(false); }}
+                    className="block w-full text-left px-3 py-2.5 text-sm font-medium text-foreground hover:bg-secondary rounded-lg"
+                  >
+                    {item.label}
+                  </button>
                 </li>
               ))}
             </ul>

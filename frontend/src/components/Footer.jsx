@@ -14,7 +14,7 @@ const Footer = () => {
               <span className="font-heading font-extrabold text-lg">Alliance Diagnostic</span>
             </div>
             <p className="text-sm opacity-70 leading-relaxed">
-              Accurate Reports. Trusted Care. India's growing network of NABL accredited diagnostic labs.
+              Accurate Reports. Trusted Care. India's growing network of trusted diagnostic labs.
             </p>
           </div>
 
@@ -61,7 +61,7 @@ const Footer = () => {
 
         <div className="border-t border-background/10 mt-10 pt-6 text-center">
           <p className="text-sm opacity-50">
-            © 2026 Alliance Diagnostic. All rights reserved. | NABL Accredited | ISO 15189:2022 Certified
+            © 2026 Alliance Diagnostic. All rights reserved.
           </p>
         </div>
       </div>

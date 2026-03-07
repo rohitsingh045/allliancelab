@@ -70,7 +70,7 @@ const HealthConditions = () => {
   const items = dataMap[activeTab] || [];
 
   return (
-    <section className="py-14 md:py-20 bg-background">
+    <section id="health-conditions" className="py-14 md:py-20 bg-background">
       <div className="container mx-auto px-4">
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-10 border-b border-border">
