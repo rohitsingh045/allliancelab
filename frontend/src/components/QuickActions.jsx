@@ -24,7 +24,7 @@ const actions = [
     description: "Access your reports online",
     gradient: "bg-gradient-primary",
     action: "navigate",
-    target: "/my-reports",
+    target: "/download-report",
   },
   {
     icon: Upload,
