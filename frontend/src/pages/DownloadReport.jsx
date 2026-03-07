@@ -2,10 +2,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import {
-  Download, FileText, Search, AlertCircle, CheckCircle2,
-  RefreshCw, User, FlaskConical, Calendar, Hash
-} from "lucide-react";
+import { Download, FileText, Search, AlertCircle, CheckCircle2, RefreshCw, User, FlaskConical, Calendar, Hash } from "lucide-react";
 import { toast } from "sonner";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";

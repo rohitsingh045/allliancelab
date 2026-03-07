@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
-  ShoppingCart, Users, DollarSign, Clock, LogOut, RefreshCw,
-  Package, CheckCircle2, Truck, XCircle, ChevronDown, Search,
+  Users, DollarSign, Clock, LogOut, RefreshCw,
+  CheckCircle2, XCircle, ChevronDown, Search,
   Phone, Mail, Calendar, User as UserIcon, FlaskConical, Microscope,
   Activity, TestTubes, HeartPulse, Droplets, Upload, FileImage, Eye,
   FileUp, Trash2, ClipboardCopy, Hash
@@ -68,8 +68,12 @@ const AdminDashboard = () => {
   const [deletingReport, setDeletingReport] = useState(null);
 
   const token = localStorage.getItem("auth_token");
-
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
+
+  const authHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+    "Content-Type": "application/json",
+  });
 
   const fetchData = useCallback(async () => {
     if (!token) { navigate("/login"); return; }
@@ -170,10 +174,9 @@ const AdminDashboard = () => {
       };
       reader.onload = async () => {
         try {
-          const currentToken = localStorage.getItem("auth_token");
           const res = await fetch(`${API_BASE}/admin/orders/${orderId}/items/${itemIndex}/report`, {
             method: "PATCH",
-            headers: { Authorization: `Bearer ${currentToken}`, "Content-Type": "application/json" },
+            headers: authHeaders(),
             body: JSON.stringify({ reportFile: reader.result, reportFileName: file.name }),
           });
           if (res.ok) {
@@ -201,10 +204,9 @@ const AdminDashboard = () => {
     const key = `${orderId}-${itemIndex}`;
     setUploadingReport(key);
     try {
-      const currentToken = localStorage.getItem("auth_token");
       const res = await fetch(`${API_BASE}/admin/orders/${orderId}/items/${itemIndex}/report`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${currentToken}`, "Content-Type": "application/json" },
+        headers: authHeaders(),
       });
       if (res.ok) {
         const updated = await res.json();
@@ -233,10 +235,9 @@ const AdminDashboard = () => {
     reader.onerror = () => { alert("Failed to read file."); setUploadingAdminReport(false); };
     reader.onload = async () => {
       try {
-        const currentToken = localStorage.getItem("auth_token");
         const res = await fetch(`${API_BASE}/reports/admin/upload`, {
           method: "POST",
-          headers: { Authorization: `Bearer ${currentToken}`, "Content-Type": "application/json" },
+          headers: authHeaders(),
           body: JSON.stringify({
             ...reportForm,
             reportFile: reader.result,
@@ -266,10 +267,9 @@ const AdminDashboard = () => {
     if (!confirm("Delete this report permanently?")) return;
     setDeletingReport(reportId);
     try {
-      const currentToken = localStorage.getItem("auth_token");
       const res = await fetch(`${API_BASE}/reports/admin/${reportId}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${currentToken}` },
+        headers: authHeaders(),
       });
       if (res.ok) {
         setAdminReports((prev) => prev.filter((r) => r._id !== reportId));

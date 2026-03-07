@@ -23,15 +23,9 @@ router.post("/admin/upload", adminAuth, async (req, res) => {
   try {
     const { uniqueId, patientName, patientPhone, testName, reportFile, reportFileName, notes } = req.body;
 
-    if (!uniqueId || !uniqueId.trim()) {
-      return res.status(400).json({ error: "Unique ID is required" });
-    }
-    if (!patientName || !patientName.trim()) {
-      return res.status(400).json({ error: "Patient name is required" });
-    }
-    if (!reportFile) {
-      return res.status(400).json({ error: "Report file is required" });
-    }
+    if (!uniqueId?.trim()) return res.status(400).json({ error: "Unique ID is required" });
+    if (!patientName?.trim()) return res.status(400).json({ error: "Patient name is required" });
+    if (!reportFile) return res.status(400).json({ error: "Report file is required" });
 
     // Check if uniqueId already exists
     const existing = await Report.findOne({ uniqueId: uniqueId.trim() });
@@ -95,9 +89,7 @@ router.delete("/admin/:id", adminAuth, async (req, res) => {
 router.get("/download/:uniqueId", async (req, res) => {
   try {
     const { uniqueId } = req.params;
-    if (!uniqueId || !uniqueId.trim()) {
-      return res.status(400).json({ error: "Unique ID is required" });
-    }
+    if (!uniqueId?.trim()) return res.status(400).json({ error: "Unique ID is required" });
 
     const report = await Report.findOne({ uniqueId: uniqueId.trim() });
     if (!report) {
