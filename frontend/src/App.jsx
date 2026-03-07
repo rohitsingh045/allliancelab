@@ -15,6 +15,7 @@ import UploadPrescription from "./pages/UploadPrescription.jsx";
 import MyReports from "./pages/MyReports.jsx";
 import HealthConditionDetail from "./pages/HealthConditionDetail.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import DownloadReport from "./pages/DownloadReport.jsx";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/upload-prescription" element={<UploadPrescription />} />
               <Route path="/my-reports" element={<MyReports />} />
+              <Route path="/download-report" element={<DownloadReport />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/health-conditions/:slug" element={<HealthConditionDetail />} />
               <Route path="*" element={<NotFound />} />

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, MapPin, Menu, X, ChevronDown, User, LogOut, Shield } from "lucide-react";
+import { Search, ShoppingCart, MapPin, Menu, X, ChevronDown, User, LogOut, Shield, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CitySelector from "@/components/CitySelector.jsx";
 import { useAuth } from "@/context/AuthContext";
@@ -98,6 +98,15 @@ const Header = () => {
                 {totalItems}
               </span>
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden md:flex"
+              onClick={() => navigate("/download-report")}
+            >
+              <FileText className="w-4 h-4 mr-1" />
+              Download Report
+            </Button>
             {user?.role === "admin" && (
               <Button
                 variant="outline"
@@ -183,6 +192,14 @@ const Header = () => {
                 </li>
               ))}
             </ul>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => { navigate("/download-report"); setMobileOpen(false); }}
+            >
+              <FileText className="w-4 h-4 mr-1" />
+              Download Report
+            </Button>
             {user?.role === "admin" && (
               <Button
                 variant="outline"

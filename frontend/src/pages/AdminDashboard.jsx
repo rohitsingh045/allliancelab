@@ -5,7 +5,8 @@ import {
   ShoppingCart, Users, DollarSign, Clock, LogOut, RefreshCw,
   Package, CheckCircle2, Truck, XCircle, ChevronDown, Search,
   Phone, Mail, Calendar, User as UserIcon, FlaskConical, Microscope,
-  Activity, TestTubes, HeartPulse, Droplets, Upload, FileImage, Eye
+  Activity, TestTubes, HeartPulse, Droplets, Upload, FileImage, Eye,
+  FileUp, Trash2, ClipboardCopy, Hash
 } from "lucide-react";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -60,6 +61,11 @@ const AdminDashboard = () => {
   const [updatingRx, setUpdatingRx] = useState(null);
   const [viewingImage, setViewingImage] = useState(null);
   const [uploadingReport, setUploadingReport] = useState(null);
+  const [adminReports, setAdminReports] = useState([]);
+  const [reportForm, setReportForm] = useState({ uniqueId: "", patientName: "", patientPhone: "", testName: "", notes: "" });
+  const [reportFile, setReportFile] = useState(null);
+  const [uploadingAdminReport, setUploadingAdminReport] = useState(false);
+  const [deletingReport, setDeletingReport] = useState(null);
 
   const token = localStorage.getItem("auth_token");
 
@@ -79,14 +85,20 @@ const AdminDashboard = () => {
       if (!meRes.ok) { navigate("/login"); return; }
 
       const meData = await meRes.json();
-      const statsData = await statsRes.json();
-      const ordersData = await ordersRes.json();
+      const statsData = statsRes.ok ? await statsRes.json() : {};
+      const ordersData = ordersRes.ok ? await ordersRes.json() : [];
       const rxData = rxRes.ok ? await rxRes.json() : [];
 
       setAdmin(meData.admin);
       setStats(statsData);
       setOrders(ordersData);
       setPrescriptions(rxData);
+
+      // Fetch reports separately so it doesn't block the dashboard
+      try {
+        const reportsRes = await fetch(`${API_BASE}/reports/admin/all`, { headers });
+        if (reportsRes.ok) setAdminReports(await reportsRes.json());
+      } catch { /* reports tab will just be empty */ }
     } catch {
       navigate("/login");
     } finally {
@@ -208,6 +220,74 @@ const AdminDashboard = () => {
     } finally {
       setUploadingReport(null);
     }
+  };
+
+  const handleAdminReportUpload = async (e) => {
+    e.preventDefault();
+    if (!reportFile) { alert("Please select a report file."); return; }
+    if (!reportForm.uniqueId.trim()) { alert("Please enter a Unique ID."); return; }
+    if (!reportForm.patientName.trim()) { alert("Please enter the patient name."); return; }
+
+    setUploadingAdminReport(true);
+    const reader = new FileReader();
+    reader.onerror = () => { alert("Failed to read file."); setUploadingAdminReport(false); };
+    reader.onload = async () => {
+      try {
+        const currentToken = localStorage.getItem("auth_token");
+        const res = await fetch(`${API_BASE}/reports/admin/upload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${currentToken}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...reportForm,
+            reportFile: reader.result,
+            reportFileName: reportFile.name,
+          }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setAdminReports((prev) => [data, ...prev]);
+          setReportForm({ uniqueId: "", patientName: "", patientPhone: "", testName: "", notes: "" });
+          setReportFile(null);
+          alert("Report uploaded successfully! Unique ID: " + data.uniqueId);
+        } else {
+          alert(data.error || "Failed to upload report.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Network error. Please try again.");
+      } finally {
+        setUploadingAdminReport(false);
+      }
+    };
+    reader.readAsDataURL(reportFile);
+  };
+
+  const handleAdminReportDelete = async (reportId) => {
+    if (!confirm("Delete this report permanently?")) return;
+    setDeletingReport(reportId);
+    try {
+      const currentToken = localStorage.getItem("auth_token");
+      const res = await fetch(`${API_BASE}/reports/admin/${reportId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${currentToken}` },
+      });
+      if (res.ok) {
+        setAdminReports((prev) => prev.filter((r) => r._id !== reportId));
+        alert("Report deleted.");
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to delete report.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error.");
+    } finally {
+      setDeletingReport(null);
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => alert("Unique ID copied: " + text)).catch(() => {});
   };
 
   const handleUserSearch = async (e) => {
@@ -352,6 +432,16 @@ const AdminDashboard = () => {
             <Upload className="w-3.5 h-3.5" /> Prescriptions ({prescriptions.length})
           </button>
           <button
+            onClick={() => setActiveTab("reports")}
+            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-1.5 ${
+              activeTab === "reports"
+                ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-md shadow-teal-200"
+                : "bg-white/80 backdrop-blur-sm text-teal-700 hover:bg-white border border-teal-100"
+            }`}
+          >
+            <FileUp className="w-3.5 h-3.5" /> Upload Reports ({adminReports.length})
+          </button>
+          <button
             onClick={fetchData}
             className="ml-auto px-3 py-2.5 rounded-xl bg-white/80 backdrop-blur-sm text-teal-600 hover:bg-white border border-teal-100 text-sm transition-all"
             title="Refresh"
@@ -371,7 +461,7 @@ const AdminDashboard = () => {
                   </div>
                   <span className="text-sm text-teal-600 font-medium">Total Orders</span>
                 </div>
-                <p className="text-3xl font-bold text-slate-800">{stats.totalOrders}</p>
+                <p className="text-3xl font-bold text-slate-800">{stats.totalOrders || 0}</p>
                 <p className="text-xs text-teal-500 mt-1">Lab test bookings</p>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-emerald-100 p-5 shadow-sm hover:shadow-md transition-shadow group">
@@ -381,7 +471,7 @@ const AdminDashboard = () => {
                   </div>
                   <span className="text-sm text-emerald-600 font-medium">Revenue (Paid)</span>
                 </div>
-                <p className="text-3xl font-bold text-slate-800">₹{stats.totalRevenue.toLocaleString("en-IN")}</p>
+                <p className="text-3xl font-bold text-slate-800">₹{(stats.totalRevenue || 0).toLocaleString("en-IN")}</p>
                 <p className="text-xs text-emerald-500 mt-1">Total collections</p>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-cyan-100 p-5 shadow-sm hover:shadow-md transition-shadow group">
@@ -391,7 +481,7 @@ const AdminDashboard = () => {
                   </div>
                   <span className="text-sm text-cyan-600 font-medium">Total Patients</span>
                 </div>
-                <p className="text-3xl font-bold text-slate-800">{stats.totalUsers}</p>
+                <p className="text-3xl font-bold text-slate-800">{stats.totalUsers || 0}</p>
                 <p className="text-xs text-cyan-500 mt-1">Registered users</p>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-amber-100 p-5 shadow-sm hover:shadow-md transition-shadow group">
@@ -401,7 +491,7 @@ const AdminDashboard = () => {
                   </div>
                   <span className="text-sm text-amber-600 font-medium">Pending Samples</span>
                 </div>
-                <p className="text-3xl font-bold text-slate-800">{stats.pendingOrders}</p>
+                <p className="text-3xl font-bold text-slate-800">{stats.pendingOrders || 0}</p>
                 <p className="text-xs text-amber-500 mt-1">Awaiting collection</p>
               </div>
             </div>
@@ -906,6 +996,193 @@ const AdminDashboard = () => {
                 </div>
               ))
             )}
+          </div>
+        )}
+
+        {/* Upload Reports Tab */}
+        {activeTab === "reports" && (
+          <div className="space-y-6">
+            {/* Upload Form */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 p-5 shadow-sm">
+              <h2 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                <FileUp className="w-5 h-5 text-teal-500" />
+                Upload Patient Report
+              </h2>
+              <form onSubmit={handleAdminReportUpload} className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
+                      Unique ID <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-teal-400" />
+                      <input
+                        type="text"
+                        value={reportForm.uniqueId}
+                        onChange={(e) => setReportForm((f) => ({ ...f, uniqueId: e.target.value }))}
+                        placeholder="e.g. RPT-2024-001"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-teal-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
+                      Patient Name <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-teal-400" />
+                      <input
+                        type="text"
+                        value={reportForm.patientName}
+                        onChange={(e) => setReportForm((f) => ({ ...f, patientName: e.target.value }))}
+                        placeholder="Patient full name"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-teal-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
+                      Patient Phone
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-teal-400" />
+                      <input
+                        type="text"
+                        value={reportForm.patientPhone}
+                        onChange={(e) => setReportForm((f) => ({ ...f, patientPhone: e.target.value }))}
+                        placeholder="Mobile number (optional)"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-teal-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
+                      Test Name
+                    </label>
+                    <div className="relative">
+                      <FlaskConical className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-teal-400" />
+                      <input
+                        type="text"
+                        value={reportForm.testName}
+                        onChange={(e) => setReportForm((f) => ({ ...f, testName: e.target.value }))}
+                        placeholder="e.g. Complete Blood Count"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-teal-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
+                    Notes
+                  </label>
+                  <textarea
+                    value={reportForm.notes}
+                    onChange={(e) => setReportForm((f) => ({ ...f, notes: e.target.value }))}
+                    placeholder="Any additional notes (optional)"
+                    rows={2}
+                    className="w-full px-4 py-2.5 rounded-xl border border-teal-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700 resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
+                    Report File (PDF/Image, max 15MB) <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file && file.size > 15 * 1024 * 1024) {
+                        alert("File too large. Max 15 MB.");
+                        e.target.value = "";
+                        return;
+                      }
+                      setReportFile(file || null);
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl border border-teal-200 text-sm bg-white file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
+                  />
+                  {reportFile && (
+                    <p className="text-xs text-teal-500 mt-1">Selected: {reportFile.name} ({(reportFile.size / 1024).toFixed(1)} KB)</p>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  disabled={uploadingAdminReport}
+                  className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white px-8 rounded-xl shadow-sm"
+                >
+                  {uploadingAdminReport ? (
+                    <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Uploading...</>
+                  ) : (
+                    <><FileUp className="w-4 h-4 mr-2" /> Upload Report</>
+                  )}
+                </Button>
+              </form>
+            </div>
+
+            {/* Uploaded Reports List */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 shadow-sm">
+              <div className="p-5 border-b border-teal-50 flex items-center gap-2">
+                <Microscope className="w-5 h-5 text-teal-500" />
+                <h2 className="font-bold text-lg text-slate-800">Uploaded Reports ({adminReports.length})</h2>
+              </div>
+              {adminReports.length === 0 ? (
+                <div className="text-center py-12">
+                  <FileUp className="w-12 h-12 text-teal-200 mx-auto mb-3" />
+                  <p className="text-teal-400 font-medium">No reports uploaded yet</p>
+                  <p className="text-sm text-teal-300 mt-1">Upload a report above to get started</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-teal-50">
+                  {adminReports.map((report) => (
+                    <div key={report._id} className="p-4 hover:bg-teal-50/30 transition-colors">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="font-mono text-xs bg-teal-50 text-teal-700 px-2.5 py-1 rounded-lg border border-teal-100 font-bold">
+                              {report.uniqueId}
+                            </span>
+                            <button
+                              onClick={() => copyToClipboard(report.uniqueId)}
+                              className="text-teal-400 hover:text-teal-600 transition-colors"
+                              title="Copy Unique ID"
+                            >
+                              <ClipboardCopy className="w-3.5 h-3.5" />
+                            </button>
+                            {report.testName && (
+                              <span className="text-xs bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded-full border border-cyan-200">
+                                {report.testName}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm font-medium text-slate-700">
+                            {report.patientName}
+                            {report.patientPhone && <span className="text-teal-400 ml-2">{report.patientPhone}</span>}
+                          </p>
+                          <p className="text-xs text-teal-400 mt-0.5">
+                            {report.reportFileName} &bull; Uploaded {new Date(report.createdAt).toLocaleString()}
+                          </p>
+                          {report.notes && <p className="text-xs text-slate-500 mt-1">{report.notes}</p>}
+                        </div>
+                        <button
+                          onClick={() => handleAdminReportDelete(report._id)}
+                          disabled={deletingReport === report._id}
+                          className="shrink-0 text-xs font-medium text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-3 py-2 rounded-lg border border-rose-200 flex items-center gap-1 transition-colors"
+                        >
+                          {deletingReport === report._id ? (
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-3.5 h-3.5" />
+                          )}
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
