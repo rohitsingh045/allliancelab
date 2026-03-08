@@ -142,7 +142,7 @@ const AboutUs = () => {
             </div>
             <div className="flex items-center justify-center gap-3 text-muted-foreground">
               <MapPin className="w-5 h-5 text-primary" />
-              <span>42 Healthcare Avenue, Dharampeth, Nagpur 440010</span>
+              <span>Vedam Netralaya, O-42 Doctor's Colony Kankarbagh, Patna (800020)</span>
             </div>
           </div>
         </div>

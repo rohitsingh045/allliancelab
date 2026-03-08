@@ -53,7 +53,7 @@ const Footer = () => {
                 <Mail className="w-4 h-4 shrink-0" /> alliancediagnosticlab@gmail.com
               </li>
               <li className="flex items-start gap-2 text-sm opacity-70">
-                <MapPin className="w-4 h-4 shrink-0 mt-0.5" /> 42 Healthcare Avenue, Andheri West, Mumbai 400053
+                <MapPin className="w-4 h-4 shrink-0 mt-0.5" /> Vedam Netralaya, O-42 Doctor's Colony Kankarbagh, Patna (800020)
               </li>
             </ul>
           </div>
