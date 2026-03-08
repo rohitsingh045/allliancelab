@@ -8,6 +8,7 @@ import {
   Activity, TestTubes, HeartPulse, Droplets, Upload, FileImage, Eye,
   FileUp, Trash2, ClipboardCopy, Hash, Home, MapPin
 } from "lucide-react";
+import NotificationBell from "@/components/NotificationBell";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -420,6 +421,9 @@ const AdminDashboard = () => {
                 <span className="text-xs font-bold text-white">{admin?.name?.charAt(0) || "A"}</span>
               </div>
               <span className="text-sm text-white font-medium">{admin?.name}</span>
+            </div>
+            <div className="[&_button]:text-white [&_button:hover]:bg-white/15">
+              <NotificationBell role="admin" token={localStorage.getItem("auth_token")} />
             </div>
             <Button
               size="sm"

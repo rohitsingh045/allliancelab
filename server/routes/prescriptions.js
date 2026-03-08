@@ -1,5 +1,6 @@
 import express from "express";
 import Prescription from "../models/Prescription.js";
+import Notification from "../models/Notification.js";
 import { authMiddleware } from "../lib/authHelpers.js";
 
 const router = express.Router();
@@ -25,6 +26,17 @@ router.post("/", authMiddleware, async (req, res) => {
       fileName,
       notes,
     });
+
+    // Notify admin about new prescription
+    try {
+      await Notification.create({
+        recipient: "admin",
+        type: "new_prescription",
+        title: "New Prescription Uploaded",
+        message: `${patientName} has uploaded a prescription.`,
+        relatedId: prescription._id.toString(),
+      });
+    } catch (_) {}
 
     res.status(201).json(prescription);
   } catch (err) {

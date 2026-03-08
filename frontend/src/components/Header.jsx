@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import CitySelector from "@/components/CitySelector.jsx";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import NotificationBell from "@/components/NotificationBell";
 import logo from "@/assets/logo.png";
 
 const navItems = [
@@ -23,7 +24,7 @@ const Header = () => {
   const [city, setCity] = useState("Nagpur");
   const [cityOpen, setCityOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { user, logout } = useAuth();
+  const { user, token, logout } = useAuth();
   const { totalItems } = useCart();
   const navigate = useNavigate();
 
@@ -110,6 +111,9 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            {user && token && (
+              <NotificationBell role="user" token={token} />
+            )}
             <Button variant="ghost" size="icon" className="relative text-foreground" onClick={() => navigate("/cart")}>
               <ShoppingCart className="w-5 h-5" />
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center">

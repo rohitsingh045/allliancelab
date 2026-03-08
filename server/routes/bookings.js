@@ -1,5 +1,6 @@
 import express from "express";
 import Booking from "../models/Booking.js";
+import Notification from "../models/Notification.js";
 
 const router = express.Router();
 
@@ -24,6 +25,18 @@ router.post("/", async (req, res) => {
     }
     const booking = new Booking({ name, phone, city });
     const saved = await booking.save();
+
+    // Notify admin about new home collection booking
+    try {
+      await Notification.create({
+        recipient: "admin",
+        type: "new_booking",
+        title: "New Home Collection Booking",
+        message: `${name} from ${city} has booked a home collection.`,
+        relatedId: saved._id.toString(),
+      });
+    } catch (_) {}
+
     res.status(201).json(saved);
   } catch (err) {
     res.status(400).json({ message: err.message });

@@ -2,6 +2,7 @@ import express from "express";
 import Order from "../models/Order.js";
 import User from "../models/User.js";
 import Prescription from "../models/Prescription.js";
+import Notification from "../models/Notification.js";
 import { createToken, verifyToken } from "../lib/authHelpers.js";
 
 const router = express.Router();
@@ -52,6 +53,21 @@ router.patch("/orders/:id", adminAuth, async (req, res) => {
 
     const order = await Order.findByIdAndUpdate(req.params.id, update, { new: true }).populate("user", "name email phone");
     if (!order) return res.status(404).json({ error: "Order not found" });
+
+    // Notify user about order status change
+    if (order.user && orderStatus) {
+      try {
+        await Notification.create({
+          recipient: "user",
+          recipientId: order.user._id,
+          type: "order_status_update",
+          title: "Order Status Updated",
+          message: `Your order status has been updated to "${orderStatus.replace("_", " ")}".`,
+          relatedId: order._id.toString(),
+        });
+      } catch (_) {}
+    }
+
     res.json(order);
   } catch (err) {
     console.error("Update order error:", err);
@@ -213,6 +229,20 @@ router.patch("/orders/:orderId/items/:itemIndex/report", adminAuth, async (req, 
     order.items[idx].reportUploadedAt = new Date();
     await order.save();
 
+    // Notify user about report upload
+    if (order.user) {
+      try {
+        await Notification.create({
+          recipient: "user",
+          recipientId: order.user,
+          type: "report_uploaded",
+          title: "Report Uploaded",
+          message: `Your report for "${order.items[idx].name}" has been uploaded and is ready to download.`,
+          relatedId: order._id.toString(),
+        });
+      } catch (_) {}
+    }
+
     const updated = await Order.findById(order._id).populate("user", "name email phone");
     res.json(updated);
   } catch (err) {
@@ -266,6 +296,21 @@ router.patch("/prescriptions/:id", adminAuth, async (req, res) => {
     const prescription = await Prescription.findByIdAndUpdate(req.params.id, update, { new: true })
       .populate("user", "name email phone");
     if (!prescription) return res.status(404).json({ error: "Prescription not found" });
+
+    // Notify user about prescription status change
+    if (prescription.user && status) {
+      try {
+        await Notification.create({
+          recipient: "user",
+          recipientId: prescription.user._id,
+          type: "prescription_status_update",
+          title: "Prescription Status Updated",
+          message: `Your prescription status has been updated to "${status}".`,
+          relatedId: prescription._id.toString(),
+        });
+      } catch (_) {}
+    }
+
     res.json(prescription);
   } catch (err) {
     console.error("Update prescription error:", err);

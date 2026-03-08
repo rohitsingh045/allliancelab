@@ -1,5 +1,7 @@
 import express from "express";
 import Report from "../models/Report.js";
+import Notification from "../models/Notification.js";
+import User from "../models/User.js";
 import { verifyToken } from "../lib/authHelpers.js";
 
 const router = express.Router();
@@ -54,6 +56,23 @@ router.post("/admin/upload", adminAuth, async (req, res) => {
       notes: report.notes,
       createdAt: report.createdAt,
     });
+
+    // Notify user if phone matches a registered user
+    if (patientPhone?.trim()) {
+      try {
+        const matchedUser = await User.findOne({ phone: patientPhone.trim() });
+        if (matchedUser) {
+          await Notification.create({
+            recipient: "user",
+            recipientId: matchedUser._id,
+            type: "admin_report_uploaded",
+            title: "Report Available",
+            message: `Your report "${testName || 'Lab Report'}" (ID: ${uniqueId.trim()}) has been uploaded and is ready to download.`,
+            relatedId: report._id.toString(),
+          });
+        }
+      } catch (_) {}
+    }
   } catch (err) {
     console.error("Upload report error:", err);
     res.status(500).json({ error: "Failed to upload report" });

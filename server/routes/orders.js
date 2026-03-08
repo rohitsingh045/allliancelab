@@ -1,5 +1,6 @@
 import express from "express";
 import Order from "../models/Order.js";
+import Notification from "../models/Notification.js";
 import { authMiddleware } from "../lib/authHelpers.js";
 
 const router = express.Router();
@@ -28,6 +29,19 @@ router.post("/", authMiddleware, async (req, res) => {
     });
 
     await order.save();
+
+    // Notify admin about new order
+    try {
+      const itemNames = items.map((i) => i.name).join(", ");
+      await Notification.create({
+        recipient: "admin",
+        type: "new_order",
+        title: "New Order Placed",
+        message: `A new order for ${itemNames} (₹${totalPrice}) has been placed.`,
+        relatedId: order._id.toString(),
+      });
+    } catch (_) {}
+
     res.status(201).json({ order });
   } catch (err) {
     console.error("Create order error:", err);
