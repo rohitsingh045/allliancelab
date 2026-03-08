@@ -311,6 +311,26 @@ const AdminDashboard = () => {
     }
   };
 
+  const [deletingBooking, setDeletingBooking] = useState(null);
+
+  const deleteBooking = async (bookingId) => {
+    if (!window.confirm("Are you sure you want to delete this booking?")) return;
+    setDeletingBooking(bookingId);
+    try {
+      const res = await fetch(`${API_BASE}/bookings/${bookingId}`, {
+        method: "DELETE",
+        headers,
+      });
+      if (res.ok) {
+        setBookings((prev) => prev.filter((b) => b._id !== bookingId));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeletingBooking(null);
+    }
+  };
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => alert("Unique ID copied: " + text)).catch(() => {});
   };
@@ -1293,17 +1313,27 @@ const AdminDashboard = () => {
                             {new Date(booking.createdAt).toLocaleString()}
                           </td>
                           <td className="px-5 py-3.5">
-                            <select
-                              value={booking.status}
-                              onChange={(e) => updateBookingStatus(booking._id, e.target.value)}
-                              disabled={updatingBooking === booking._id}
-                              className="px-2.5 py-1.5 rounded-lg border border-teal-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
-                            >
-                              <option value="pending">Pending</option>
-                              <option value="confirmed">Confirmed</option>
-                              <option value="completed">Completed</option>
-                              <option value="cancelled">Cancelled</option>
-                            </select>
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={booking.status}
+                                onChange={(e) => updateBookingStatus(booking._id, e.target.value)}
+                                disabled={updatingBooking === booking._id}
+                                className="px-2.5 py-1.5 rounded-lg border border-teal-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
+                              >
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                              </select>
+                              <button
+                                onClick={() => deleteBooking(booking._id)}
+                                disabled={deletingBooking === booking._id}
+                                className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition-colors disabled:opacity-50"
+                                title="Delete booking"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
