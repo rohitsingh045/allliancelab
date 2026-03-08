@@ -389,28 +389,28 @@ async function seed() {
     await HealthPackage.deleteMany({});
     const healthPackagesData = [
       {
-        name: "LupiKavach Health Screen Package - Lily",
+        name: "Swastik Health Screen Package - Lily",
         price: 1240,
         parameters: 80,
         reportTime: "Same Day",
         prerequisites: "Detailed Clinical History",
       },
       {
-        name: "LupiKavach Health Screen Package - Daisy",
+        name: "Swastik Health Screen Package - Daisy",
         price: 1790,
         parameters: 87,
         reportTime: "Same Day",
         prerequisites: "Detailed Clinical History",
       },
       {
-        name: "LupiKavach Health Package - Orchid",
+        name: "Swastik Health Package - Orchid",
         price: 2250,
         parameters: 88,
         reportTime: "Same Day",
         prerequisites: "Detailed Clinical History",
       },
       {
-        name: "LupiKavach Health Screen Package - Dahlia",
+        name: "Swastik Health Screen Package - Dahlia",
         price: 990,
         parameters: 78,
         reportTime: "Same Day",
@@ -424,14 +424,14 @@ async function seed() {
         prerequisites: "Detailed Clinical History",
       },
       {
-        name: "Senior Citizen Health Package",
+        name: "Swastik Senior Health Package",
         price: 2999,
         parameters: 110,
         reportTime: "Next Day",
         prerequisites: "Detailed Clinical History",
       },
       {
-        name: "Women Wellness Package",
+        name: "Swastik Women Health Package",
         price: 1899,
         parameters: 65,
         reportTime: "Same Day",

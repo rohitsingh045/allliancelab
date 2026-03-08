@@ -47,10 +47,10 @@ const Footer = () => {
             <h4 className="font-heading font-bold text-base mb-4">Contact Us</h4>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm opacity-70">
-                <Phone className="w-4 h-4 shrink-0" /> 1800-123-4567 (Toll Free)
+                <Phone className="w-4 h-4 shrink-0" /> +91 62004 88170
               </li>
               <li className="flex items-center gap-2 text-sm opacity-70">
-                <Mail className="w-4 h-4 shrink-0" /> support@alliancediagnostic.in
+                <Mail className="w-4 h-4 shrink-0" /> alliancediagnosticlab@gmail.com
               </li>
               <li className="flex items-start gap-2 text-sm opacity-70">
                 <MapPin className="w-4 h-4 shrink-0 mt-0.5" /> 42 Healthcare Avenue, Andheri West, Mumbai 400053

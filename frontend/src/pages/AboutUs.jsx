@@ -3,10 +3,10 @@ import Footer from "@/components/Footer";
 import { Shield, Award, Users, Heart, Target, FlaskConical, MapPin, Phone, Mail } from "lucide-react";
 
 const stats = [
-  { value: "50+", label: "Cities Covered" },
+  { value: "20+", label: "Cities Covered" },
   { value: "900+", label: "Phlebotomists" },
   { value: "500+", label: "Tests Available" },
-  { value: "10L+", label: "Happy Patients" },
+  { value: "30K+", label: "Happy Patients" },
 ];
 
 const values = [
@@ -17,10 +17,10 @@ const values = [
 ];
 
 const team = [
-  { name: "Dr. Rohit Sharma", role: "Founder & Chief Pathologist", initials: "RS" },
-  { name: "Dr. Priya Deshmukh", role: "Head of Biochemistry", initials: "PD" },
-  { name: "Dr. Amit Patel", role: "Clinical Microbiologist", initials: "AP" },
-  { name: "Dr. Neha Gupta", role: "Quality Assurance Head", initials: "NG" },
+  { name: "Mr. Lokesh Kumar", role: "Founder & CEO, Alliance Group", initials: "LK" },
+  { name: "Dr. Neha Singh", role: "M.B.B.S (MD), Pathologist", initials: "NS" },
+  { name: "Mr. Rohit Kumar", role: "IT Head & Media", initials: "RK" },
+  { name: "Mr. Raman Kumar", role: "Marketing Head", initials: "RK" },
 ];
 
 const AboutUs = () => {
@@ -134,11 +134,11 @@ const AboutUs = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-center gap-3 text-muted-foreground">
               <Phone className="w-5 h-5 text-primary" />
-              <span>1800-123-4567 (Toll Free)</span>
+              <span>+91 62004 88170</span>
             </div>
             <div className="flex items-center justify-center gap-3 text-muted-foreground">
               <Mail className="w-5 h-5 text-primary" />
-              <span>support@alliancediagnostic.in</span>
+              <span>alliancediagnosticlab@gmail.com</span>
             </div>
             <div className="flex items-center justify-center gap-3 text-muted-foreground">
               <MapPin className="w-5 h-5 text-primary" />
