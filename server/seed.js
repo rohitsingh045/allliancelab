@@ -338,6 +338,110 @@ const sampleReportsData = [
       { name: "A/G Ratio", result: "1.32", range: "1.1-2.5", unit: "-", method: "Calculated" },
     ],
   },
+  {
+    testIndex: 2, // CRP
+    title: "C-Reactive Protein (CRP)",
+    specimen: "Serum",
+    rows: [
+      { name: "C-Reactive Protein (CRP)", result: "3.2", range: "<6", unit: "mg/L", method: "Immunoturbidimetry" },
+    ],
+  },
+  {
+    testIndex: 3, // Iron Studies Panel
+    title: "Iron Studies Panel",
+    specimen: "Serum (Fasting)",
+    rows: [
+      { name: "Serum Iron", result: "85", range: "60-170", unit: "µg/dL", method: "Colorimetric" },
+      { name: "Total Iron Binding Capacity (TIBC)", result: "320", range: "250-400", unit: "µg/dL", method: "Colorimetric" },
+      { name: "Transferrin Saturation", result: "26.6", range: "20-50", unit: "%", method: "Calculated" },
+      { name: "Ferritin", result: "48", range: "12-150", unit: "ng/mL", method: "CLIA" },
+    ],
+  },
+  {
+    testIndex: 4, // Zinc Level Test
+    title: "Zinc Level Test",
+    specimen: "Serum",
+    rows: [
+      { name: "Serum Zinc", result: "82", range: "66-110", unit: "µg/dL", method: "Colorimetric" },
+    ],
+  },
+  {
+    testIndex: 8, // KFT
+    title: "Kidney Function Test (KFT)",
+    specimen: "Serum",
+    rows: [
+      { name: "Blood Urea Nitrogen (BUN)", result: "14", range: "7-20", unit: "mg/dL", method: "Urease/GLDH" },
+      { name: "Urea", result: "30", range: "15-43", unit: "mg/dL", method: "Urease/GLDH" },
+      { name: "Creatinine", result: "0.9", range: "0.7-1.3", unit: "mg/dL", method: "Modified Jaffe" },
+      { name: "BUN/Creatinine Ratio", result: "15.6", range: "10-20", unit: "-", method: "Calculated" },
+      { name: "Uric Acid", result: "5.2", range: "2.6-6.0", unit: "mg/dL", method: "Enzymatic" },
+      { name: "Sodium", result: "140", range: "136-146", unit: "mEq/L", method: "ISE" },
+      { name: "Potassium", result: "4.3", range: "3.5-5.1", unit: "mEq/L", method: "ISE" },
+      { name: "Chloride", result: "102", range: "98-106", unit: "mEq/L", method: "ISE" },
+      { name: "Calcium", result: "9.4", range: "8.5-10.5", unit: "mg/dL", method: "Arsenazo III" },
+      { name: "Phosphorus", result: "3.8", range: "2.5-4.5", unit: "mg/dL", method: "Molybdate UV" },
+    ],
+  },
+  {
+    testIndex: 9, // Vitamin D
+    title: "Vitamin D (25-OH)",
+    specimen: "Serum",
+    rows: [
+      { name: "25-Hydroxy Vitamin D", result: "32.5", range: "30-100", unit: "ng/mL", method: "CLIA" },
+      { name: "Interpretation", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "Deficient", result: "<20 ng/mL", range: "", unit: "", method: "" },
+      { name: "Insufficient", result: "20-29 ng/mL", range: "", unit: "", method: "" },
+      { name: "Sufficient", result: "30-100 ng/mL", range: "", unit: "", method: "" },
+      { name: "Toxicity Possible", result: ">100 ng/mL", range: "", unit: "", method: "" },
+    ],
+  },
+  {
+    testIndex: 10, // Vitamin B12
+    title: "Vitamin B12",
+    specimen: "Serum",
+    rows: [
+      { name: "Vitamin B12", result: "385", range: "211-946", unit: "pg/mL", method: "CLIA" },
+      { name: "Interpretation", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "Deficient", result: "<211 pg/mL", range: "", unit: "", method: "" },
+      { name: "Normal", result: "211-946 pg/mL", range: "", unit: "", method: "" },
+    ],
+  },
+  {
+    testIndex: 11, // Full Body Health Checkup
+    title: "Full Body Health Checkup",
+    specimen: "Blood (EDTA, Serum, Fluoride), Urine",
+    rows: [
+      { name: "HAEMATOLOGY", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "Hemoglobin", result: "13.2", range: "12-15", unit: "g/dL", method: "Spectrophotometry" },
+      { name: "Total WBC Count", result: "7,200", range: "4000-10000", unit: "Cells/cu.mm", method: "Impedance" },
+      { name: "Platelet Count", result: "2,80,000", range: "150000-410000", unit: "/cu.mm", method: "Impedance" },
+      { name: "ESR", result: "10", range: "0-20", unit: "mm/hr", method: "Westergren" },
+      { name: "BLOOD SUGAR", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "Fasting Blood Glucose", result: "92", range: "70-100", unit: "mg/dL", method: "Hexokinase" },
+      { name: "HbA1c", result: "5.4", range: "<5.7", unit: "%", method: "HPLC" },
+      { name: "LIPID PROFILE", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "Total Cholesterol", result: "190", range: "<200", unit: "mg/dL", method: "Enzymatic" },
+      { name: "Triglycerides", result: "138", range: "<150", unit: "mg/dL", method: "Enzymatic" },
+      { name: "HDL Cholesterol", result: "48", range: ">40", unit: "mg/dL", method: "Direct" },
+      { name: "LDL Cholesterol", result: "114", range: "<100", unit: "mg/dL", method: "Direct", isBold: true },
+      { name: "LIVER FUNCTION", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "SGOT (AST)", result: "26", range: "0-40", unit: "U/L", method: "IFCC" },
+      { name: "SGPT (ALT)", result: "30", range: "0-41", unit: "U/L", method: "IFCC" },
+      { name: "Total Bilirubin", result: "0.9", range: "0.1-1.2", unit: "mg/dL", method: "Diazo" },
+      { name: "KIDNEY FUNCTION", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "Urea", result: "28", range: "15-43", unit: "mg/dL", method: "Urease/GLDH" },
+      { name: "Creatinine", result: "0.85", range: "0.7-1.3", unit: "mg/dL", method: "Modified Jaffe" },
+      { name: "Uric Acid", result: "5.0", range: "2.6-6.0", unit: "mg/dL", method: "Enzymatic" },
+      { name: "THYROID", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "TSH", result: "2.8", range: "0.27-4.2", unit: "µIU/mL", method: "CLIA" },
+      { name: "VITAMINS", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "Vitamin D (25-OH)", result: "28", range: "30-100", unit: "ng/mL", method: "CLIA", isBold: true },
+      { name: "Vitamin B12", result: "310", range: "211-946", unit: "pg/mL", method: "CLIA" },
+      { name: "IRON STUDIES", result: "", range: "", unit: "", method: "", isHeader: true },
+      { name: "Serum Iron", result: "78", range: "60-170", unit: "µg/dL", method: "Colorimetric" },
+      { name: "Ferritin", result: "42", range: "12-150", unit: "ng/mL", method: "CLIA" },
+    ],
+  },
 ];
 
 async function seed() {

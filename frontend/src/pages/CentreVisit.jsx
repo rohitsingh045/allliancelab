@@ -80,6 +80,26 @@ const centres = [
     address: "Pulkeshi Road, Tilak Nagar, Mysuru-570015",
     phone: "9880924042, 9611039134",
   },
+  {
+    name: "Alliance Diagnostic — Bengaluru",
+    address: "169/18, 1st Main, Vidyaranyanagar, Magadi Road, Opp. Old Toll Gate Bus Stop, Bengaluru - 560023",
+    phone: "6200488170",
+  },
+  {
+    name: "Alliance Diagnostic — Gopalganj",
+    address: "Suman Hospital Near By Banjari Flyover, Gopalganj",
+    phone: "6200488170",
+  },
+  {
+    name: "Alliance Diagnostic — Jamshedpur",
+    address: "Arjun Tower, S/No. 9,11,23, Opp, Pirthiwi Paryawaran Uddhyan, Beside Reliance Fresh, New Purlia Road, Mango, Jamshedpur, Jharkhand 831012",
+    phone: "6200488170",
+  },
+  {
+    name: "Alliance Diagnostic — Ernakulam",
+    address: "Chittoor Rd, Shenoys, Ernakulam, Kerala 682035",
+    phone: "0484 4022251",
+  },
 ];
 
 const CentreVisit = () => {
