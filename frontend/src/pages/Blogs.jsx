@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Calendar, Clock, Search, ChevronRight, User } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 const blogPosts = [
   {
@@ -90,6 +91,7 @@ const blogPosts = [
 const categories = ["All", ...new Set(blogPosts.map((p) => p.category))];
 
 const Blogs = () => {
+  const { t } = useLang();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -111,10 +113,10 @@ const Blogs = () => {
       <section className="bg-gradient-primary py-14 md:py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-primary-foreground mb-4">
-            Health Blog
+            {t.blogsTitle}
           </h1>
           <p className="text-primary-foreground/80 max-w-2xl mx-auto text-lg">
-            Expert articles, health tips, and diagnostic insights to help you make informed decisions about your wellness.
+            {t.blogsSubtitle}
           </p>
         </div>
       </section>
@@ -124,7 +126,7 @@ const Blogs = () => {
         <div className="container mx-auto px-4">
           <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden md:flex">
             <div className="md:w-2/5 bg-gradient-primary flex items-center justify-center p-10">
-              <span className="text-6xl font-heading font-extrabold text-primary-foreground/20">FEATURED</span>
+              <span className="text-6xl font-heading font-extrabold text-primary-foreground/20">{t.featured}</span>
             </div>
             <div className="p-8 md:w-3/5 flex flex-col justify-center">
               <span className="text-xs font-semibold text-primary border border-primary/30 bg-primary/5 px-3 py-1 rounded-full self-start mb-3">
@@ -151,7 +153,7 @@ const Blogs = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search blog posts..."
+              placeholder={t.searchBlogs}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-11 pr-4 py-3 rounded-full border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground"

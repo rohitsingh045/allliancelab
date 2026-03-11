@@ -7,9 +7,11 @@ import { fetchTests } from "@/api/client.js";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { Plus, X, ShoppingCart, Package, Trash2 } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 const CreatePackage = () => {
   const { addItem } = useCart();
+  const { t } = useLang();
   const [selectedTests, setSelectedTests] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -51,13 +53,13 @@ const CreatePackage = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-6">
             <Package className="w-4 h-4 text-accent" />
-            <span className="text-sm font-semibold text-primary-foreground">Custom Package</span>
+            <span className="text-sm font-semibold text-primary-foreground">{t.createYourPackage}</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-primary-foreground mb-4">
-            Create Your Own Package
+            {t.createYourPackageTitle}
           </h1>
           <p className="text-primary-foreground/80 max-w-2xl mx-auto text-lg">
-            Pick individual tests and build a custom health package tailored to your needs.
+            {t.createPackageSubtitle}
           </p>
         </div>
       </section>
@@ -70,7 +72,7 @@ const CreatePackage = () => {
               <div className="mb-6">
                 <input
                   type="text"
-                  placeholder="Search tests..."
+                  placeholder={t.searchTests}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground"
@@ -108,7 +110,7 @@ const CreatePackage = () => {
                 })}
               </div>
               {filteredTests.length === 0 && (
-                <p className="text-center text-muted-foreground py-8">No tests found.</p>
+                <p className="text-center text-muted-foreground py-8">{t.noTestsFound}</p>
               )}
             </div>
 
@@ -116,10 +118,10 @@ const CreatePackage = () => {
             <div>
               <div className="sticky top-40 bg-card rounded-2xl border border-border p-6 shadow-card">
                 <h3 className="font-heading font-bold text-foreground text-lg mb-4">
-                  Your Custom Package
+                  {t.selectedTests}
                 </h3>
                 {selectedTests.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-4">No tests selected yet. Click on tests to add them.</p>
+                  <p className="text-sm text-muted-foreground py-4">{t.noTestsSelected}. {t.selectTestsToAdd}</p>
                 ) : (
                   <>
                     <ul className="space-y-2 mb-6 max-h-64 overflow-y-auto">
@@ -137,15 +139,15 @@ const CreatePackage = () => {
                     </ul>
                     <div className="border-t border-border pt-4 mb-4 space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Tests</span>
+                        <span className="text-muted-foreground">{t.selectedTests}</span>
                         <span className="font-medium text-foreground">{selectedTests.length}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Total Parameters</span>
+                        <span className="text-muted-foreground">{t.parameters}</span>
                         <span className="font-medium text-foreground">{totalParams}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="font-heading font-bold text-foreground">Total</span>
+                        <span className="font-heading font-bold text-foreground">{t.total}</span>
                         <span className="font-heading font-extrabold text-xl text-foreground">₹{totalPrice.toLocaleString("en-IN")}</span>
                       </div>
                     </div>
@@ -154,7 +156,7 @@ const CreatePackage = () => {
                       className="w-full bg-gradient-primary hover:opacity-90 text-primary-foreground font-bold py-5 rounded-xl"
                     >
                       <ShoppingCart className="w-4 h-4 mr-2" />
-                      Add All to Cart
+                      {t.addToCartBtn}
                     </Button>
                   </>
                 )}

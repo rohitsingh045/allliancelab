@@ -1,6 +1,8 @@
 import { X } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 const SampleReportModal = ({ report, onClose }) => {
+  const { t } = useLang();
   if (!report) return null;
 
   return (
@@ -8,7 +10,7 @@ const SampleReportModal = ({ report, onClose }) => {
       <div className="bg-card rounded-xl shadow-elevated w-full max-w-4xl mx-4">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-border">
-          <h2 className="text-lg font-heading font-bold text-primary">Sample Report — {report.title}</h2>
+          <h2 className="text-lg font-heading font-bold text-primary">{t.sampleReportTitle} — {report.title}</h2>
           <button onClick={onClose} className="p-1 text-muted-foreground hover:text-foreground transition-colors">
             <X className="w-6 h-6" />
           </button>
@@ -18,22 +20,22 @@ const SampleReportModal = ({ report, onClose }) => {
           {/* Patient / Specimen / Client Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="border border-border rounded-lg p-3 space-y-1">
-              <h4 className="font-heading font-bold text-foreground mb-2">Patient Information</h4>
-              <p><span className="text-muted-foreground">Name:</span> <span className="text-foreground">Dummy</span></p>
-              <p><span className="text-muted-foreground">Age/Gender:</span> <span className="text-foreground">38 Y 0 M / Female</span></p>
-              <p><span className="text-muted-foreground">UHID:</span> <span className="text-foreground">Dummy.000000</span></p>
+              <h4 className="font-heading font-bold text-foreground mb-2">{t.patientInformation}</h4>
+              <p><span className="text-muted-foreground">{t.name}:</span> <span className="text-foreground">Dummy</span></p>
+              <p><span className="text-muted-foreground">{t.ageGender}:</span> <span className="text-foreground">38 Y 0 M / Female</span></p>
+              <p><span className="text-muted-foreground">{t.uhid}:</span> <span className="text-foreground">Dummy.000000</span></p>
             </div>
             <div className="border border-border rounded-lg p-3 space-y-1">
-              <h4 className="font-heading font-bold text-foreground mb-2">Specimen Information</h4>
-              <p><span className="text-muted-foreground">Visit ID:</span> <span className="text-foreground">Dummy0101</span></p>
-              <p><span className="text-muted-foreground">Specimen:</span> <span className="text-foreground">{report.specimen}</span></p>
-              <p><span className="text-muted-foreground">Status:</span> <span className="text-foreground">Final Report</span></p>
+              <h4 className="font-heading font-bold text-foreground mb-2">{t.specimenInformation}</h4>
+              <p><span className="text-muted-foreground">{t.visitId}:</span> <span className="text-foreground">Dummy0101</span></p>
+              <p><span className="text-muted-foreground">{t.specimen}:</span> <span className="text-foreground">{report.specimen}</span></p>
+              <p><span className="text-muted-foreground">{t.status}:</span> <span className="text-foreground">{t.finalReport}</span></p>
             </div>
             <div className="border border-border rounded-lg p-3 space-y-1">
-              <h4 className="font-heading font-bold text-foreground mb-2">Client/Doctor Information</h4>
-              <p><span className="text-muted-foreground">Client Name:</span> <span className="text-foreground">Dummy Client</span></p>
-              <p><span className="text-muted-foreground">Client Code:</span> <span className="text-foreground">Dummy001</span></p>
-              <p><span className="text-muted-foreground">Ref Doctor:</span> <span className="text-foreground">Self</span></p>
+              <h4 className="font-heading font-bold text-foreground mb-2">{t.clientDoctorInformation}</h4>
+              <p><span className="text-muted-foreground">{t.clientName}:</span> <span className="text-foreground">Dummy Client</span></p>
+              <p><span className="text-muted-foreground">{t.clientCode}:</span> <span className="text-foreground">Dummy001</span></p>
+              <p><span className="text-muted-foreground">{t.refDoctor}:</span> <span className="text-foreground">Self</span></p>
             </div>
           </div>
 
@@ -42,11 +44,11 @@ const SampleReportModal = ({ report, onClose }) => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-primary text-primary-foreground">
-                  <th className="text-left px-4 py-2.5 font-semibold">Test Name</th>
-                  <th className="text-center px-4 py-2.5 font-semibold">Result</th>
-                  <th className="text-center px-4 py-2.5 font-semibold">Bio. Ref. Range</th>
-                  <th className="text-center px-4 py-2.5 font-semibold">Unit</th>
-                  <th className="text-center px-4 py-2.5 font-semibold">Method</th>
+                  <th className="text-left px-4 py-2.5 font-semibold">{t.testName}</th>
+                  <th className="text-center px-4 py-2.5 font-semibold">{t.result}</th>
+                  <th className="text-center px-4 py-2.5 font-semibold">{t.bioRefRange}</th>
+                  <th className="text-center px-4 py-2.5 font-semibold">{t.unit}</th>
+                  <th className="text-center px-4 py-2.5 font-semibold">{t.method}</th>
                 </tr>
               </thead>
               <tbody>
@@ -73,8 +75,8 @@ const SampleReportModal = ({ report, onClose }) => {
 
           {/* Footer note */}
           <div className="text-xs text-muted-foreground space-y-1">
-            <p>If Values are marked with *, they are critical values.</p>
-            <p className="text-center font-semibold">*** End Of Report ***</p>
+            <p>{t.criticalValuesNote}</p>
+            <p className="text-center font-semibold">*** {t.endOfReport} ***</p>
           </div>
         </div>
       </div>

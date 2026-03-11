@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Bell, Check, CheckCheck, ShoppingCart, FileText, Upload, Home, ClipboardList, X } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -38,6 +39,7 @@ function timeAgo(date) {
 }
 
 export default function NotificationBell({ role = "user", token }) {
+  const { t } = useLang();
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -128,14 +130,14 @@ export default function NotificationBell({ role = "user", token }) {
         <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-card border border-border rounded-2xl shadow-2xl z-[100] overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary/50">
-            <h3 className="font-bold text-foreground text-sm">Notifications</h3>
+            <h3 className="font-bold text-foreground text-sm">{t.notifications}</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button
                   onClick={markAllRead}
                   className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1"
                 >
-                  <CheckCheck className="w-3.5 h-3.5" /> Mark all read
+                  <CheckCheck className="w-3.5 h-3.5" /> {t.markAllRead}
                 </button>
               )}
               <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
@@ -147,11 +149,11 @@ export default function NotificationBell({ role = "user", token }) {
           {/* List */}
           <div className="max-h-80 overflow-y-auto">
             {loading ? (
-              <div className="p-6 text-center text-muted-foreground text-sm">Loading...</div>
+              <div className="p-6 text-center text-muted-foreground text-sm">{t.loading}</div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
                 <Bell className="w-10 h-10 text-muted-foreground/40 mx-auto mb-2" />
-                <p className="text-muted-foreground text-sm font-medium">No notifications yet</p>
+                <p className="text-muted-foreground text-sm font-medium">{t.noNotifications}</p>
               </div>
             ) : (
               notifications.map((n) => {

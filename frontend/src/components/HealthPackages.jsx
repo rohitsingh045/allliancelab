@@ -4,11 +4,13 @@ import { Clock, FlaskConical, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fetchHealthPackages } from "@/api/client.js";
 import { useCart } from "@/context/CartContext";
+import { useLang } from "@/context/LanguageContext";
 import { toast } from "sonner";
 
 const HealthPackages = () => {
   const scrollRef = useRef(null);
   const { addItem, isInCart } = useCart();
+  const { t } = useLang();
 
   const { data: packages = [] } = useQuery({
     queryKey: ["healthPackages"],
@@ -26,7 +28,7 @@ const HealthPackages = () => {
 
   const handleAddToCart = (pkg) => {
     if (isInCart(pkg._id, "package")) {
-      toast.info(`${pkg.name} is already in cart`);
+      toast.info(`${pkg.name} ${t.alreadyInCart}`);
       return;
     }
     addItem({
@@ -37,8 +39,8 @@ const HealthPackages = () => {
       parameters: pkg.parameters,
       reportTime: pkg.reportTime,
     });
-    toast.success(`${pkg.name} added to cart!`, {
-      description: "Go to cart to proceed with booking.",
+    toast.success(`${pkg.name} ${t.addedToCart}`, {
+      description: t.goToCart,
     });
   };
 
@@ -50,26 +52,26 @@ const HealthPackages = () => {
         {/* Header row */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <h2 className="font-heading font-extrabold text-2xl md:text-3xl text-foreground">
-            Popular Health Checkup Packages
+            {t.popularHealthCheckupPackages}
           </h2>
           <div className="flex flex-wrap items-center gap-3">
             <Button
               variant="outline"
               className="border-primary text-primary hover:bg-primary/5 font-semibold rounded-lg px-5"
             >
-              Compare Packages
+              {t.comparePackagesBtn}
             </Button>
             <Button
               variant="outline"
               className="border-accent text-accent hover:bg-accent/5 font-semibold rounded-lg px-5"
             >
-              Create Your Packages
+              {t.createYourPackages}
             </Button>
             <Button
               variant="outline"
               className="border-primary text-primary hover:bg-primary/5 font-semibold rounded-lg px-5"
             >
-              View All Packages
+              {t.viewAllPackages}
             </Button>
           </div>
         </div>
@@ -110,7 +112,7 @@ const HealthPackages = () => {
                     </span>
                   </div>
                   <p className="text-primary-foreground/80 text-sm">
-                    {pkg.parameters} Test parameter(s)
+                    {pkg.parameters} {t.testParameters}
                   </p>
                 </div>
 
@@ -122,7 +124,7 @@ const HealthPackages = () => {
                         <Clock className="w-4 h-4 text-muted-foreground" />
                       </span>
                       <span className="text-sm text-foreground">
-                        Report on {pkg.reportTime.toLowerCase() === "same day" ? "same day" : pkg.reportTime.toLowerCase()}
+                        {t.reportOn} {pkg.reportTime.toLowerCase() === "same day" ? "same day" : pkg.reportTime.toLowerCase()}
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
@@ -136,12 +138,12 @@ const HealthPackages = () => {
                   {/* Footer */}
                   <div className="border-t border-border pt-4 mt-6 flex items-center justify-between gap-2">
                     <button className="text-sm font-semibold text-primary hover:underline whitespace-nowrap">
-                      Know More
+                      {t.knowMore}
                     </button>
                     <div className="flex items-center gap-3">
                       <label className="flex items-center gap-1.5 cursor-pointer text-xs text-muted-foreground hover:text-foreground">
                         <input type="checkbox" className="w-4 h-4 rounded border-border accent-primary" />
-                        Compare
+                        {t.compare}
                       </label>
                       <Button
                         size="sm"
@@ -152,7 +154,7 @@ const HealthPackages = () => {
                             : "bg-accent hover:bg-accent/90 text-accent-foreground"
                         }`}
                       >
-                        {isInCart(pkg._id, "package") ? "Added ✓" : "Add to Cart"}
+                        {isInCart(pkg._id, "package") ? t.addedCheck : t.addToCart}
                       </Button>
                     </div>
                   </div>

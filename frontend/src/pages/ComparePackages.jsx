@@ -7,9 +7,11 @@ import { fetchHealthPackages } from "@/api/client.js";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { Check, X, ShoppingCart, GitCompareArrows } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 const ComparePackages = () => {
   const { addItem, isInCart } = useCart();
+  const { t } = useLang();
   const [selected, setSelected] = useState([]);
 
   const { data: packages = [] } = useQuery({
@@ -45,13 +47,13 @@ const ComparePackages = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-6">
             <GitCompareArrows className="w-4 h-4 text-accent" />
-            <span className="text-sm font-semibold text-primary-foreground">Compare</span>
+            <span className="text-sm font-semibold text-primary-foreground">{t.compare}</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-primary-foreground mb-4">
-            Compare Health Packages
+            {t.comparePackagesTitle}
           </h1>
           <p className="text-primary-foreground/80 max-w-2xl mx-auto text-lg">
-            Select up to 3 packages to compare their tests, pricing, and features side by side.
+            {t.comparePackagesSubtitle}
           </p>
         </div>
       </section>
@@ -60,7 +62,7 @@ const ComparePackages = () => {
         <div className="container mx-auto px-4">
           {/* Selection */}
           <h2 className="text-xl font-heading font-bold text-foreground mb-6">
-            Select Packages to Compare ({selected.length}/3)
+            {t.selectPackage} ({selected.length}/3)
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-12">
             {packages.map((pkg) => (
@@ -93,7 +95,7 @@ const ComparePackages = () => {
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th className="text-left p-4 bg-secondary rounded-tl-xl font-heading font-bold text-foreground">Feature</th>
+                    <th className="text-left p-4 bg-secondary rounded-tl-xl font-heading font-bold text-foreground">{t.testsIncluded}</th>
                     {selectedPackages.map((pkg) => (
                       <th key={pkg._id} className="p-4 bg-secondary font-heading font-bold text-foreground text-center last:rounded-tr-xl">
                         {pkg.name}
@@ -103,25 +105,25 @@ const ComparePackages = () => {
                 </thead>
                 <tbody>
                   <tr className="border-b border-border">
-                    <td className="p-4 text-sm font-medium text-muted-foreground">Price</td>
+                    <td className="p-4 text-sm font-medium text-muted-foreground">{t.price}</td>
                     {selectedPackages.map((pkg) => (
                       <td key={pkg._id} className="p-4 text-center font-heading font-extrabold text-foreground">₹{pkg.price?.toLocaleString("en-IN")}</td>
                     ))}
                   </tr>
                   <tr className="border-b border-border bg-secondary/30">
-                    <td className="p-4 text-sm font-medium text-muted-foreground">Parameters</td>
+                    <td className="p-4 text-sm font-medium text-muted-foreground">{t.parameters}</td>
                     {selectedPackages.map((pkg) => (
                       <td key={pkg._id} className="p-4 text-center text-sm text-foreground">{pkg.parameters}</td>
                     ))}
                   </tr>
                   <tr className="border-b border-border">
-                    <td className="p-4 text-sm font-medium text-muted-foreground">Report Time</td>
+                    <td className="p-4 text-sm font-medium text-muted-foreground">{t.reportTime}</td>
                     {selectedPackages.map((pkg) => (
                       <td key={pkg._id} className="p-4 text-center text-sm text-foreground">{pkg.reportTime}</td>
                     ))}
                   </tr>
                   <tr className="border-b border-border bg-secondary/30">
-                    <td className="p-4 text-sm font-medium text-muted-foreground">Pre-requisites</td>
+                    <td className="p-4 text-sm font-medium text-muted-foreground">{t.prerequisites}</td>
                     {selectedPackages.map((pkg) => (
                       <td key={pkg._id} className="p-4 text-center text-sm text-foreground">{pkg.prerequisites || "None"}</td>
                     ))}
@@ -140,7 +142,7 @@ const ComparePackages = () => {
                           }`}
                         >
                           <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
-                          {isInCart(pkg._id, "package") ? "Added" : "Add to Cart"}
+                          {isInCart(pkg._id, "package") ? t.addedCheck : t.addToCart}
                         </Button>
                       </td>
                     ))}
@@ -151,10 +153,10 @@ const ComparePackages = () => {
           )}
 
           {selectedPackages.length < 2 && selected.length > 0 && (
-            <p className="text-center text-muted-foreground py-8">Select at least 2 packages to compare.</p>
+            <p className="text-center text-muted-foreground py-8">{t.noPackagesToCompare}</p>
           )}
           {selected.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">Select packages from above to start comparing.</p>
+            <p className="text-center text-muted-foreground py-8">{t.noPackagesToCompare}</p>
           )}
         </div>
       </section>

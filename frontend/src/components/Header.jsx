@@ -5,19 +5,10 @@ import { Button } from "@/components/ui/button";
 import CitySelector from "@/components/CitySelector.jsx";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useLang } from "@/context/LanguageContext";
 import NotificationBell from "@/components/NotificationBell";
+import LanguageSelector from "@/components/LanguageSelector";
 import logo from "@/assets/logo.png";
-
-const navItems = [
-  { label: "Home Collection", type: "navigate", target: "/home-collection" },
-  { label: "Centre Visit", type: "navigate", target: "/centre-visit" },
-  { label: "Health Packages", type: "scroll", target: "health-packages" },
-  { label: "Health Conditions", type: "scroll", target: "health-conditions" },
-  { label: "Compare Packages", type: "navigate", target: "/compare-packages" },
-  { label: "Create Your Package", type: "navigate", target: "/create-package" },
-  { label: "About Us", type: "navigate", target: "/about-us" },
-  { label: "Knowledge Hub", type: "navigate", target: "/knowledge-hub" },
-];
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -26,7 +17,19 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { user, token, logout } = useAuth();
   const { totalItems } = useCart();
+  const { t } = useLang();
   const navigate = useNavigate();
+
+  const navItems = [
+    { label: t.homeCollection, type: "navigate", target: "/home-collection" },
+    { label: t.centreVisit, type: "navigate", target: "/centre-visit" },
+    { label: t.healthPackages, type: "scroll", target: "health-packages" },
+    { label: t.healthConditions, type: "scroll", target: "health-conditions" },
+    { label: t.comparePackages, type: "navigate", target: "/compare-packages" },
+    { label: t.createYourPackage, type: "navigate", target: "/create-package" },
+    { label: t.aboutUs, type: "navigate", target: "/about-us" },
+    { label: t.knowledgeHub, type: "navigate", target: "/knowledge-hub" },
+  ];
 
   const handleNavClick = (item) => {
     if (item.type === "navigate") {
@@ -49,18 +52,19 @@ const Header = () => {
       <div className="bg-gradient-primary">
         <div className="container mx-auto px-4 py-2 flex items-center justify-between">
           <p className="text-sm font-medium text-primary-foreground opacity-90">
-            Accurate Reports. Trusted Care.
+            {t.tagline}
           </p>
           <div className="hidden md:flex items-center gap-4">
+            <LanguageSelector />
             <button
               onClick={() => navigate("/blogs")}
               className="text-sm text-primary-foreground opacity-80 hover:opacity-100 transition-opacity"
             >
-              Blogs
+              {t.blogs}
             </button>
             {user ? (
               <span className="text-sm text-primary-foreground opacity-90 font-medium">
-                Hi, {user.name}
+                {t.hi}, {user.name}
               </span>
             ) : (
               <Button
@@ -70,7 +74,7 @@ const Header = () => {
                 onClick={() => navigate("/login")}
               >
                 <User className="w-4 h-4 mr-1" />
-                Customer Login
+                {t.customerLogin}
               </Button>
             )}
           </div>
@@ -102,7 +106,7 @@ const Header = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder='Search tests like "HbA1c", "CRP"...'
+              placeholder={t.searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
@@ -128,7 +132,7 @@ const Header = () => {
                 onClick={() => navigate("/admin/dashboard")}
               >
                 <Shield className="w-4 h-4 mr-1" />
-                Admin
+                {t.admin}
               </Button>
             )}
             {user ? (
@@ -137,7 +141,7 @@ const Header = () => {
                 onClick={logout}
               >
                 <LogOut className="w-4 h-4 mr-1" />
-                Logout
+                {t.logout}
               </Button>
             ) : (
               <Button
@@ -145,7 +149,7 @@ const Header = () => {
                 onClick={() => navigate("/login")}
               >
                 <User className="w-4 h-4 mr-1" />
-                Login
+                {t.login}
               </Button>
             )}
             <button
@@ -184,7 +188,7 @@ const Header = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search tests..."
+                placeholder={t.searchTestsMobile}
                 className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border bg-secondary text-sm text-foreground"
               />
             </div>
@@ -215,7 +219,7 @@ const Header = () => {
                 onClick={() => { navigate("/admin/dashboard"); setMobileOpen(false); }}
               >
                 <Shield className="w-4 h-4 mr-1" />
-                Admin Dashboard
+                {t.adminDashboard}
               </Button>
             )}
             {user ? (
@@ -224,14 +228,14 @@ const Header = () => {
                 onClick={() => { logout(); setMobileOpen(false); }}
               >
                 <LogOut className="w-4 h-4 mr-1" />
-                Logout ({user.name})
+                {t.logout} ({user.name})
               </Button>
             ) : (
               <Button
                 className="w-full bg-gradient-primary text-primary-foreground font-semibold"
                 onClick={() => { navigate("/login"); setMobileOpen(false); }}
               >
-                Customer Login
+                {t.customerLogin}
               </Button>
             )}
           </div>

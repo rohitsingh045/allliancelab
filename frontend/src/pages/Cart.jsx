@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import { useLang } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Trash2, ShoppingCart, ArrowLeft, ArrowRight } from "lucide-react";
 import Header from "@/components/Header.jsx";
@@ -7,6 +8,7 @@ import Footer from "@/components/Footer.jsx";
 
 const Cart = () => {
   const { items, removeItem, clearCart, totalPrice, totalItems } = useCart();
+  const { t } = useLang();
   const navigate = useNavigate();
 
   if (totalItems === 0) {
@@ -15,12 +17,12 @@ const Cart = () => {
         <Header />
         <div className="container mx-auto px-4 py-20 text-center">
           <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Your cart is empty</h1>
-          <p className="text-muted-foreground mb-6">Add tests or health packages to get started.</p>
+          <h1 className="text-2xl font-bold text-foreground mb-2">{t.yourCartEmpty}</h1>
+          <p className="text-muted-foreground mb-6">{t.addTestsToGetStarted}</p>
           <Link to="/">
             <Button className="bg-gradient-primary text-primary-foreground font-semibold">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Browse Tests
+              {t.browseTests}
             </Button>
           </Link>
         </div>
@@ -33,7 +35,7 @@ const Cart = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Your Cart ({totalItems} items)</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">{t.yourCart} ({totalItems} {t.items})</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
@@ -54,7 +56,7 @@ const Cart = () => {
                     <p className="text-sm text-muted-foreground">{item.parameters} parameters</p>
                   )}
                   {item.reportTime && (
-                    <p className="text-sm text-muted-foreground">Report: {item.reportTime}</p>
+                    <p className="text-sm text-muted-foreground">{t.report}: {item.reportTime}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-4">
@@ -75,14 +77,14 @@ const Cart = () => {
               onClick={clearCart}
               className="text-sm text-red-500 hover:underline font-medium"
             >
-              Clear Cart
+              {t.clearCart}
             </button>
           </div>
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-card rounded-xl border border-border p-6 sticky top-28">
-              <h2 className="font-bold text-lg text-foreground mb-4">Order Summary</h2>
+              <h2 className="font-bold text-lg text-foreground mb-4">{t.orderSummary}</h2>
               <div className="space-y-3 mb-4">
                 {items.map((item) => (
                   <div key={`${item.type}-${item.id}`} className="flex justify-between text-sm">
@@ -93,7 +95,7 @@ const Cart = () => {
               </div>
               <div className="border-t border-border pt-3 mb-6">
                 <div className="flex justify-between text-lg font-bold text-foreground">
-                  <span>Total</span>
+                  <span>{t.total}</span>
                   <span>₹{totalPrice.toLocaleString("en-IN")}</span>
                 </div>
               </div>
@@ -101,11 +103,11 @@ const Cart = () => {
                 className="w-full bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold py-3"
                 onClick={() => navigate("/checkout")}
               >
-                Proceed to Checkout
+                {t.proceedToCheckout}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
               <Link to="/" className="block text-center text-sm text-primary hover:underline mt-3">
-                Continue Shopping
+                {t.continueShopping}
               </Link>
             </div>
           </div>

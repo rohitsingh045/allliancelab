@@ -6,9 +6,11 @@ import { fetchHealthConditionBySlug } from "@/api/client.js";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ChevronRight } from "lucide-react";
 import NotFound from "./NotFound.jsx";
+import { useLang } from "@/context/LanguageContext";
 
 const HealthConditionDetail = () => {
   const { slug } = useParams();
+  const { t } = useLang();
 
   const { data: condition, isLoading, error } = useQuery({
     queryKey: ["healthCondition", slug],
@@ -36,11 +38,11 @@ const HealthConditionDetail = () => {
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center gap-1 text-sm text-muted-foreground">
           <Link to="/" className="hover:text-foreground transition-colors">
-            Home
+            {t.backToHome}
           </Link>
           <ChevronRight className="w-4 h-4" />
           <Link to="/#health-conditions" className="hover:text-foreground transition-colors">
-            Health Conditions
+            {t.healthConditionsTab}
           </Link>
           <ChevronRight className="w-4 h-4" />
           <span className="text-foreground font-medium">{condition.label}</span>
@@ -96,7 +98,7 @@ const HealthConditionDetail = () => {
         <section className="bg-secondary/50 border-t border-border">
           <div className="container mx-auto px-4 py-10 md:py-14">
             <h2 className="text-xl md:text-2xl font-heading font-bold text-foreground mb-6">
-              Recommended Tests
+              {t.testsIncluded || "Recommended Tests"}
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {relatedTests.map((test) => (
@@ -108,7 +110,7 @@ const HealthConditionDetail = () => {
                     {test.name}
                   </h3>
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{test.parameters} Parameters</span>
+                    <span>{test.parameters} {t.parameters}</span>
                     <span className="font-bold text-primary text-base">₹{test.price}</span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-2">

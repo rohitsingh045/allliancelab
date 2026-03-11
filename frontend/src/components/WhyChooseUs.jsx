@@ -6,59 +6,62 @@ import {
   MapPin,
   Award,
 } from "lucide-react";
-
-const features = [
-  {
-    icon: ShieldCheck,
-    label: "24*7 Home Collection",
-    ring: "border-primary",
-    bg: "bg-primary/10",
-    iconColor: "text-primary",
-  },
-  {
-    icon: FlaskConical,
-    label: "Free Home Collection",
-    ring: "border-accent",
-    bg: "bg-accent/10",
-    iconColor: "text-accent",
-  },
-  {
-    icon: Lock,
-    label: "100% Sample Protection",
-    ring: "border-primary",
-    bg: "bg-primary/10",
-    iconColor: "text-primary",
-  },
-  {
-    icon: TrendingUp,
-    label: "Smart + Trend Analysis Reports",
-    ring: "border-accent",
-    bg: "bg-accent/10",
-    iconColor: "text-accent",
-  },
-  {
-    icon: MapPin,
-    label: "900+ Phlebotomists with Real Time Tracking",
-    ring: "border-primary",
-    bg: "bg-primary/10",
-    iconColor: "text-primary",
-  },
-  {
-    icon: Award,
-    label: "A Brand Trusted By Healthcare Professionals",
-    ring: "border-accent",
-    bg: "bg-accent/10",
-    iconColor: "text-accent",
-  },
-];
+import { useLang } from "@/context/LanguageContext";
 
 const WhyChooseUs = () => {
+  const { t } = useLang();
+
+  const features = [
+    {
+      icon: ShieldCheck,
+      label: t.homeCollection247,
+      ring: "border-primary",
+      bg: "bg-primary/10",
+      iconColor: "text-primary",
+    },
+    {
+      icon: FlaskConical,
+      label: t.freeHomeCollection,
+      ring: "border-accent",
+      bg: "bg-accent/10",
+      iconColor: "text-accent",
+    },
+    {
+      icon: Lock,
+      label: t.sampleProtection,
+      ring: "border-primary",
+      bg: "bg-primary/10",
+      iconColor: "text-primary",
+    },
+    {
+      icon: TrendingUp,
+      label: t.smartReports,
+      ring: "border-accent",
+      bg: "bg-accent/10",
+      iconColor: "text-accent",
+    },
+    {
+      icon: MapPin,
+      label: t.phlebotomists,
+      ring: "border-primary",
+      bg: "bg-primary/10",
+      iconColor: "text-primary",
+    },
+    {
+      icon: Award,
+      label: t.trustedBrand,
+      ring: "border-accent",
+      bg: "bg-accent/10",
+      iconColor: "text-accent",
+    },
+  ];
+
   return (
     <section className="py-14 md:py-20 bg-primary/5">
       <div className="container mx-auto px-4">
         <h2 className="font-heading font-extrabold text-2xl md:text-3xl text-center mb-12 text-foreground">
-          You choose <span className="text-gradient-primary">best-in-class</span> Diagnostic experience with{" "}
-          <span className="text-gradient-primary">Alliance Diagnostic</span>
+          {t.whyChooseTitle1} <span className="text-gradient-primary">{t.whyChooseBestInClass}</span> {t.whyChooseTitle2}{" "}
+          <span className="text-gradient-primary">{t.whyChooseBrand}</span>
         </h2>
 
         {/* Desktop connected layout */}

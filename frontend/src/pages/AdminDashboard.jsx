@@ -9,6 +9,7 @@ import {
   FileUp, Trash2, ClipboardCopy, Hash, Home, MapPin
 } from "lucide-react";
 import NotificationBell from "@/components/NotificationBell";
+import { useLang } from "@/context/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -44,6 +45,7 @@ const LabPattern = () => (
 );
 
 const AdminDashboard = () => {
+  const { t } = useLang();
   const navigate = useNavigate();
   const [admin, setAdmin] = useState(null);
   const [stats, setStats] = useState(null);
@@ -393,7 +395,7 @@ const AdminDashboard = () => {
             <FlaskConical className="w-8 h-8 text-white" />
           </div>
           <RefreshCw className="w-6 h-6 text-teal-500 animate-spin mx-auto" />
-          <p className="text-sm text-teal-600 mt-2 font-medium">Loading Lab Dashboard...</p>
+          <p className="text-sm text-teal-600 mt-2 font-medium">{t.loadingLabDashboard}</p>
         </div>
       </div>
     );
@@ -411,8 +413,8 @@ const AdminDashboard = () => {
               <FlaskConical className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-lg text-white leading-tight">Lab Admin Panel</h1>
-              <p className="text-[10px] text-teal-200 font-medium tracking-wide uppercase">Alliance Diagnostics</p>
+              <h1 className="font-bold text-lg text-white leading-tight">{t.labAdminPanel}</h1>
+              <p className="text-[10px] text-teal-200 font-medium tracking-wide uppercase">{t.allianceDiagnostics}</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -431,7 +433,7 @@ const AdminDashboard = () => {
               className="bg-white/15 hover:bg-white/25 text-white border border-white/20 backdrop-blur-sm"
             >
               <LogOut className="w-4 h-4 mr-1" />
-              Logout
+              {t.logout}
             </Button>
           </div>
         </div>
@@ -448,7 +450,7 @@ const AdminDashboard = () => {
                 : "bg-white/80 backdrop-blur-sm text-teal-700 hover:bg-white border border-teal-100"
             }`}
           >
-            <Activity className="w-3.5 h-3.5" /> Dashboard
+            <Activity className="w-3.5 h-3.5" /> {t.dashboard}
           </button>
           <button
             onClick={() => setActiveTab("orders")}
@@ -458,7 +460,7 @@ const AdminDashboard = () => {
                 : "bg-white/80 backdrop-blur-sm text-teal-700 hover:bg-white border border-teal-100"
             }`}
           >
-            <TestTubes className="w-3.5 h-3.5" /> All Orders ({orders.length})
+            <TestTubes className="w-3.5 h-3.5" /> {t.allOrders} ({orders.length})
           </button>
           <button
             onClick={() => setActiveTab("search")}
@@ -468,7 +470,7 @@ const AdminDashboard = () => {
                 : "bg-white/80 backdrop-blur-sm text-teal-700 hover:bg-white border border-teal-100"
             }`}
           >
-            <Search className="w-3.5 h-3.5" /> Search Users
+            <Search className="w-3.5 h-3.5" /> {t.searchUsers}
           </button>
           <button
             onClick={() => setActiveTab("prescriptions")}
@@ -478,7 +480,7 @@ const AdminDashboard = () => {
                 : "bg-white/80 backdrop-blur-sm text-teal-700 hover:bg-white border border-teal-100"
             }`}
           >
-            <Upload className="w-3.5 h-3.5" /> Prescriptions ({prescriptions.length})
+            <Upload className="w-3.5 h-3.5" /> {t.prescriptions} ({prescriptions.length})
           </button>
           <button
             onClick={() => setActiveTab("reports")}
@@ -488,7 +490,7 @@ const AdminDashboard = () => {
                 : "bg-white/80 backdrop-blur-sm text-teal-700 hover:bg-white border border-teal-100"
             }`}
           >
-            <FileUp className="w-3.5 h-3.5" /> Upload Reports ({adminReports.length})
+            <FileUp className="w-3.5 h-3.5" /> {t.uploadReports} ({adminReports.length})
           </button>
           <button
             onClick={() => setActiveTab("bookings")}
@@ -498,7 +500,7 @@ const AdminDashboard = () => {
                 : "bg-white/80 backdrop-blur-sm text-teal-700 hover:bg-white border border-teal-100"
             }`}
           >
-            <Home className="w-3.5 h-3.5" /> Home Bookings ({bookings.length})
+            <Home className="w-3.5 h-3.5" /> {t.homeBookings} ({bookings.length})
           </button>
           <button
             onClick={fetchData}
@@ -518,40 +520,40 @@ const AdminDashboard = () => {
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                     <TestTubes className="w-6 h-6 text-white" />
                   </div>
-                  <span className="text-sm text-teal-600 font-medium">Total Orders</span>
+                  <span className="text-sm text-teal-600 font-medium">{t.totalOrders}</span>
                 </div>
                 <p className="text-3xl font-bold text-slate-800">{stats.totalOrders || 0}</p>
-                <p className="text-xs text-teal-500 mt-1">Lab test bookings</p>
+                <p className="text-xs text-teal-500 mt-1">{t.labTestBookings}</p>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-emerald-100 p-5 shadow-sm hover:shadow-md transition-shadow group">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                     <DollarSign className="w-6 h-6 text-white" />
                   </div>
-                  <span className="text-sm text-emerald-600 font-medium">Revenue (Paid)</span>
+                  <span className="text-sm text-emerald-600 font-medium">{t.revenuePaid}</span>
                 </div>
                 <p className="text-3xl font-bold text-slate-800">₹{(stats.totalRevenue || 0).toLocaleString("en-IN")}</p>
-                <p className="text-xs text-emerald-500 mt-1">Total collections</p>
+                <p className="text-xs text-emerald-500 mt-1">{t.totalCollections}</p>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-cyan-100 p-5 shadow-sm hover:shadow-md transition-shadow group">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                     <Users className="w-6 h-6 text-white" />
                   </div>
-                  <span className="text-sm text-cyan-600 font-medium">Total Patients</span>
+                  <span className="text-sm text-cyan-600 font-medium">{t.totalPatients}</span>
                 </div>
                 <p className="text-3xl font-bold text-slate-800">{stats.totalUsers || 0}</p>
-                <p className="text-xs text-cyan-500 mt-1">Registered users</p>
+                <p className="text-xs text-cyan-500 mt-1">{t.registeredUsers}</p>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-amber-100 p-5 shadow-sm hover:shadow-md transition-shadow group">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                     <Clock className="w-6 h-6 text-white" />
                   </div>
-                  <span className="text-sm text-amber-600 font-medium">Pending Samples</span>
+                  <span className="text-sm text-amber-600 font-medium">{t.pendingSamples}</span>
                 </div>
                 <p className="text-3xl font-bold text-slate-800">{stats.pendingOrders || 0}</p>
-                <p className="text-xs text-amber-500 mt-1">Awaiting collection</p>
+                <p className="text-xs text-amber-500 mt-1">{t.awaitingCollection}</p>
               </div>
             </div>
 
@@ -559,18 +561,18 @@ const AdminDashboard = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 shadow-sm">
               <div className="p-5 border-b border-teal-50 flex items-center gap-2">
                 <Droplets className="w-5 h-5 text-teal-500" />
-                <h2 className="font-bold text-lg text-slate-800">Recent Lab Orders</h2>
+                <h2 className="font-bold text-lg text-slate-800">{t.recentLabOrders}</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-600">
                     <tr>
-                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Order ID</th>
-                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Patient</th>
-                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Amount</th>
-                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Payment</th>
-                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Status</th>
-                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Date</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.orderId}</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.patient}</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.amount}</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.payment}</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.status}</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.date}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-teal-50">
@@ -597,7 +599,7 @@ const AdminDashboard = () => {
                 {(!stats.recentOrders || stats.recentOrders.length === 0) && (
                   <div className="text-center py-12">
                     <FlaskConical className="w-10 h-10 text-teal-200 mx-auto mb-2" />
-                    <p className="text-teal-400 font-medium">No lab orders yet</p>
+                    <p className="text-teal-400 font-medium">{t.noLabOrders}</p>
                   </div>
                 )}
               </div>
@@ -609,13 +611,13 @@ const AdminDashboard = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 shadow-sm">
             <div className="p-5 border-b border-teal-50 flex items-center gap-2">
               <TestTubes className="w-5 h-5 text-teal-500" />
-              <h2 className="font-bold text-lg text-slate-800">All Lab Orders</h2>
+              <h2 className="font-bold text-lg text-slate-800">{t.allLabOrders}</h2>
             </div>
             <div className="divide-y divide-teal-50">
               {orders.length === 0 && (
                 <div className="text-center py-16">
                   <FlaskConical className="w-12 h-12 text-teal-200 mx-auto mb-3" />
-                  <p className="text-teal-400 font-medium">No lab orders found</p>
+                  <p className="text-teal-400 font-medium">{t.noLabOrdersFound}</p>
                 </div>
               )}
               {orders.map((order) => (
@@ -638,23 +640,23 @@ const AdminDashboard = () => {
 
                       <div className="grid sm:grid-cols-2 gap-2 text-sm mb-3">
                         <div>
-                          <span className="text-teal-500">Patient:</span>{" "}
+                          <span className="text-teal-500">{t.patient}:</span>{" "}
                           <span className="font-medium text-slate-700">{order.user?.name || "N/A"}</span>
                         </div>
                         <div>
-                          <span className="text-teal-500">Email:</span>{" "}
+                          <span className="text-teal-500">{t.email}:</span>{" "}
                           <span className="font-medium text-slate-700">{order.user?.email || "N/A"}</span>
                         </div>
                         <div>
-                          <span className="text-teal-500">Phone:</span>{" "}
+                          <span className="text-teal-500">{t.phone}:</span>{" "}
                           <span className="font-medium text-slate-700">{order.phone}</span>
                         </div>
                         <div>
-                          <span className="text-teal-500">Payment:</span>{" "}
+                          <span className="text-teal-500">{t.payment}:</span>{" "}
                           <span className="font-medium uppercase text-slate-700">{order.paymentMethod}</span>
                         </div>
                         <div className="sm:col-span-2">
-                          <span className="text-teal-500">Address:</span>{" "}
+                          <span className="text-teal-500">{t.address}:</span>{" "}
                           <span className="font-medium text-slate-700">{order.address}</span>
                         </div>
                       </div>
@@ -662,7 +664,7 @@ const AdminDashboard = () => {
                       {/* Items with Report Upload */}
                       <div className="bg-gradient-to-r from-teal-50/80 to-cyan-50/80 rounded-xl p-3.5 mb-3 border border-teal-100/50">
                         <p className="text-xs text-teal-600 mb-2 font-semibold uppercase tracking-wider flex items-center gap-1">
-                          <Microscope className="w-3 h-3" /> Test Items &amp; Reports
+                          <Microscope className="w-3 h-3" /> {t.testItemsReports}
                         </p>
                         <div className="space-y-2">
                           {order.items.map((item, i) => (
@@ -676,7 +678,7 @@ const AdminDashboard = () => {
                                 {item.reportFile ? (
                                   <>
                                     <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-                                      <CheckCircle2 className="w-3 h-3" /> Report uploaded
+                                      <CheckCircle2 className="w-3 h-3" /> {t.reportUploaded}
                                     </span>
                                     <button
                                       onClick={() => handleReportDelete(order._id, i)}
@@ -698,7 +700,7 @@ const AdminDashboard = () => {
                                     ) : (
                                       <Upload className="w-3 h-3" />
                                     )}
-                                    Upload Report
+                                    {t.uploadReport}
                                   </button>
                                 )}
                               </div>
@@ -706,7 +708,7 @@ const AdminDashboard = () => {
                           ))}
                         </div>
                         <div className="border-t border-teal-200/50 mt-2 pt-2 flex justify-between font-bold text-sm">
-                          <span className="text-teal-700">Total</span>
+                          <span className="text-teal-700">{t.total}</span>
                           <span className="text-teal-800">₹{order.totalPrice.toLocaleString("en-IN")}</span>
                         </div>
                       </div>
@@ -714,31 +716,31 @@ const AdminDashboard = () => {
 
                     {/* Actions */}
                     <div className="flex flex-col gap-2 min-w-[200px] bg-teal-50/50 rounded-xl p-3 border border-teal-100/50">
-                      <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider">Order Status:</label>
+                      <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider">{t.orderStatusLabel}</label>
                       <select
                         value={order.orderStatus}
                         onChange={(e) => updateOrderStatus(order._id, "orderStatus", e.target.value)}
                         disabled={updatingOrder === order._id}
                         className="px-3 py-2 rounded-lg border border-teal-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
                       >
-                        <option value="placed">Placed</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="sample_collected">Sample Collected</option>
-                        <option value="processing">Processing</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="placed">{t.placed}</option>
+                        <option value="confirmed">{t.confirmed}</option>
+                        <option value="sample_collected">{t.sampleCollected}</option>
+                        <option value="processing">{t.processing}</option>
+                        <option value="completed">{t.completed}</option>
+                        <option value="cancelled">{t.cancelled}</option>
                       </select>
 
-                      <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mt-1">Payment Status:</label>
+                      <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mt-1">{t.paymentStatusLabel}</label>
                       <select
                         value={order.paymentStatus}
                         onChange={(e) => updateOrderStatus(order._id, "paymentStatus", e.target.value)}
                         disabled={updatingOrder === order._id}
                         className="px-3 py-2 rounded-lg border border-teal-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
                       >
-                        <option value="pending">Pending</option>
-                        <option value="paid">Paid</option>
-                        <option value="failed">Failed</option>
+                        <option value="pending">{t.pending}</option>
+                        <option value="paid">{t.paid}</option>
+                        <option value="failed">{t.failed}</option>
                       </select>
                     </div>
                   </div>
@@ -753,7 +755,7 @@ const AdminDashboard = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 p-5 shadow-sm">
               <h2 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
                 <HeartPulse className="w-5 h-5 text-teal-500" />
-                Search Patient by Mobile Number
+                {t.searchPatientByMobile}
               </h2>
               <form onSubmit={handleUserSearch} className="flex gap-3">
                 <div className="relative flex-1">
@@ -812,7 +814,7 @@ const AdminDashboard = () => {
                   {searching ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
                   ) : (
-                    <><Search className="w-4 h-4 mr-1" /> Search</>
+                    <><Search className="w-4 h-4 mr-1" /> {t.search}</>
                   )}
                 </Button>
               </form>
@@ -824,8 +826,8 @@ const AdminDashboard = () => {
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center mx-auto mb-3">
                   <UserIcon className="w-8 h-8 text-teal-300" />
                 </div>
-                <p className="text-slate-600 font-medium">No patients found</p>
-                <p className="text-sm text-teal-400 mt-1">Try a different phone number</p>
+                <p className="text-slate-600 font-medium">{t.noPatientsFound}</p>
+                <p className="text-sm text-teal-400 mt-1">{t.tryDifferentPhone}</p>
               </div>
             )}
 
@@ -839,24 +841,24 @@ const AdminDashboard = () => {
                     </div>
                     <div className="flex-1 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       <div>
-                        <p className="text-xs text-teal-400 mb-0.5">Patient Name</p>
+                        <p className="text-xs text-teal-400 mb-0.5">{t.patientName}</p>
                         <p className="font-semibold text-slate-800">{user.name}</p>
                       </div>
                       <div>
                         <p className="text-xs text-teal-400 mb-0.5 flex items-center gap-1">
-                          <Mail className="w-3 h-3" /> Email
+                          <Mail className="w-3 h-3" /> {t.email}
                         </p>
                         <p className="font-medium text-slate-700 text-sm">{user.email}</p>
                       </div>
                       <div>
                         <p className="text-xs text-teal-400 mb-0.5 flex items-center gap-1">
-                          <Phone className="w-3 h-3" /> Phone
+                          <Phone className="w-3 h-3" /> {t.phone}
                         </p>
                         <p className="font-medium text-slate-700 text-sm">{user.phone || "Not provided"}</p>
                       </div>
                       <div>
                         <p className="text-xs text-teal-400 mb-0.5 flex items-center gap-1">
-                          <Calendar className="w-3 h-3" /> Registered
+                          <Calendar className="w-3 h-3" /> {t.registered}
                         </p>
                         <p className="font-medium text-slate-700 text-sm">
                           {new Date(user.createdAt).toLocaleDateString()}
@@ -871,7 +873,7 @@ const AdminDashboard = () => {
                         onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}
                         className="text-sm text-teal-600 font-medium hover:text-teal-700 flex items-center gap-1 transition-colors"
                       >
-                        {expandedUser === user.id ? "Hide" : "View"} Orders
+                        {expandedUser === user.id ? t.hideOrders : t.viewOrders}
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedUser === user.id ? "rotate-180" : ""}`} />
                       </button>
                     </div>
@@ -882,18 +884,18 @@ const AdminDashboard = () => {
                 {expandedUser === user.id && (
                   <div className="border-t border-teal-100 bg-teal-50/40">
                     {user.orders.length === 0 ? (
-                      <p className="text-center text-teal-400 py-6 text-sm">No lab orders placed yet</p>
+                      <p className="text-center text-teal-400 py-6 text-sm">{t.noLabOrdersPlaced}</p>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead className="bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-600">
                             <tr>
-                              <th className="text-left px-5 py-2.5 font-medium">Sample ID</th>
-                              <th className="text-left px-5 py-2.5 font-medium">Tests</th>
-                              <th className="text-left px-5 py-2.5 font-medium">Amount</th>
-                              <th className="text-left px-5 py-2.5 font-medium">Payment</th>
-                              <th className="text-left px-5 py-2.5 font-medium">Status</th>
-                              <th className="text-left px-5 py-2.5 font-medium">Date</th>
+                              <th className="text-left px-5 py-2.5 font-medium">{t.sampleId}</th>
+                              <th className="text-left px-5 py-2.5 font-medium">{t.tests}</th>
+                              <th className="text-left px-5 py-2.5 font-medium">{t.amount}</th>
+                              <th className="text-left px-5 py-2.5 font-medium">{t.payment}</th>
+                              <th className="text-left px-5 py-2.5 font-medium">{t.status}</th>
+                              <th className="text-left px-5 py-2.5 font-medium">{t.date}</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-teal-100/60">
@@ -945,8 +947,8 @@ const AdminDashboard = () => {
                 <Upload className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-800">Uploaded Prescriptions</h2>
-                <p className="text-xs text-teal-500">Review and assign tests for uploaded prescriptions</p>
+                <h2 className="text-lg font-bold text-slate-800">{t.uploadedPrescriptions}</h2>
+                <p className="text-xs text-teal-500">{t.reviewPrescriptions}</p>
               </div>
             </div>
 
@@ -955,8 +957,8 @@ const AdminDashboard = () => {
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center mx-auto mb-3">
                   <Upload className="w-8 h-8 text-teal-300" />
                 </div>
-                <p className="text-slate-600 font-medium">No prescriptions uploaded yet</p>
-                <p className="text-sm text-teal-400 mt-1">Prescriptions uploaded by patients will appear here</p>
+                <p className="text-slate-600 font-medium">{t.noPrescriptionsUploaded}</p>
+                <p className="text-sm text-teal-400 mt-1">{t.prescriptionsAppearHere}</p>
               </div>
             ) : (
               prescriptions.map((rx) => (
@@ -987,20 +989,20 @@ const AdminDashboard = () => {
 
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                           <div>
-                            <p className="text-xs text-teal-400 flex items-center gap-1"><Phone className="w-3 h-3" /> Phone</p>
+                            <p className="text-xs text-teal-400 flex items-center gap-1"><Phone className="w-3 h-3" /> {t.phone}</p>
                             <p className="font-medium text-slate-700">{rx.phone}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-teal-400 flex items-center gap-1"><Mail className="w-3 h-3" /> Email</p>
+                            <p className="text-xs text-teal-400 flex items-center gap-1"><Mail className="w-3 h-3" /> {t.email}</p>
                             <p className="font-medium text-slate-700 truncate">{rx.email || "—"}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-teal-400 flex items-center gap-1"><Calendar className="w-3 h-3" /> Uploaded</p>
+                            <p className="text-xs text-teal-400 flex items-center gap-1"><Calendar className="w-3 h-3" /> {t.uploaded}</p>
                             <p className="font-medium text-slate-700">{new Date(rx.createdAt).toLocaleDateString()}</p>
                           </div>
                           {rx.address && (
                             <div>
-                              <p className="text-xs text-teal-400">Address</p>
+                              <p className="text-xs text-teal-400">{t.address}</p>
                               <p className="font-medium text-slate-700 truncate">{rx.address}</p>
                             </div>
                           )}
@@ -1008,7 +1010,7 @@ const AdminDashboard = () => {
 
                         {rx.notes && (
                           <div className="mt-3 bg-teal-50/50 rounded-lg p-3 text-sm text-slate-600">
-                            <span className="font-medium text-teal-600">Notes: </span>{rx.notes}
+                            <span className="font-medium text-teal-600">{t.notes}: </span>{rx.notes}
                           </div>
                         )}
                       </div>
@@ -1065,13 +1067,13 @@ const AdminDashboard = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 p-5 shadow-sm">
               <h2 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
                 <FileUp className="w-5 h-5 text-teal-500" />
-                Upload Patient Report
+                {t.uploadPatientReport}
               </h2>
               <form onSubmit={handleAdminReportUpload} className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
-                      Unique ID <span className="text-rose-500">*</span>
+                      {t.uniqueId} <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
                       <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-teal-400" />
@@ -1087,7 +1089,7 @@ const AdminDashboard = () => {
                   </div>
                   <div>
                     <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
-                      Patient Name <span className="text-rose-500">*</span>
+                      {t.patientName} <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
                       <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-teal-400" />
@@ -1103,7 +1105,7 @@ const AdminDashboard = () => {
                   </div>
                   <div>
                     <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
-                      Patient Phone
+                      {t.patientPhone}
                     </label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-teal-400" />
@@ -1118,7 +1120,7 @@ const AdminDashboard = () => {
                   </div>
                   <div>
                     <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
-                      Test Name
+                      {t.testNameLabel}
                     </label>
                     <div className="relative">
                       <FlaskConical className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-teal-400" />
@@ -1134,7 +1136,7 @@ const AdminDashboard = () => {
                 </div>
                 <div>
                   <label className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1 block">
-                    Notes
+                    {t.notesLabel}
                   </label>
                   <textarea
                     value={reportForm.notes}
@@ -1172,9 +1174,9 @@ const AdminDashboard = () => {
                   className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white px-8 rounded-xl shadow-sm"
                 >
                   {uploadingAdminReport ? (
-                    <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Uploading...</>
+                    <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> {t.uploading}</>
                   ) : (
-                    <><FileUp className="w-4 h-4 mr-2" /> Upload Report</>
+                    <><FileUp className="w-4 h-4 mr-2" /> {t.uploadReport}</>
                   )}
                 </Button>
               </form>
@@ -1184,13 +1186,13 @@ const AdminDashboard = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 shadow-sm">
               <div className="p-5 border-b border-teal-50 flex items-center gap-2">
                 <Microscope className="w-5 h-5 text-teal-500" />
-                <h2 className="font-bold text-lg text-slate-800">Uploaded Reports ({adminReports.length})</h2>
+                <h2 className="font-bold text-lg text-slate-800">{t.uploadedReports} ({adminReports.length})</h2>
               </div>
               {adminReports.length === 0 ? (
                 <div className="text-center py-12">
                   <FileUp className="w-12 h-12 text-teal-200 mx-auto mb-3" />
-                  <p className="text-teal-400 font-medium">No reports uploaded yet</p>
-                  <p className="text-sm text-teal-300 mt-1">Upload a report above to get started</p>
+                  <p className="text-teal-400 font-medium">{t.noReportsUploaded}</p>
+                  <p className="text-sm text-teal-300 mt-1">{t.uploadReportAbove}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-teal-50">
@@ -1234,7 +1236,7 @@ const AdminDashboard = () => {
                           ) : (
                             <Trash2 className="w-3.5 h-3.5" />
                           )}
-                          Delete
+                          {t.delete}
                         </button>
                       </div>
                     </div>
@@ -1253,8 +1255,8 @@ const AdminDashboard = () => {
                 <Home className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-800">Home Collection Bookings</h2>
-                <p className="text-xs text-teal-500">Manage home sample collection requests from patients</p>
+                <h2 className="text-lg font-bold text-slate-800">{t.homeCollectionBookings}</h2>
+                <p className="text-xs text-teal-500">{t.manageHomeCollection}</p>
               </div>
             </div>
 
@@ -1263,8 +1265,8 @@ const AdminDashboard = () => {
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center mx-auto mb-3">
                   <Home className="w-8 h-8 text-teal-300" />
                 </div>
-                <p className="text-slate-600 font-medium">No home collection bookings yet</p>
-                <p className="text-sm text-teal-400 mt-1">Bookings from the website will appear here</p>
+                <p className="text-slate-600 font-medium">{t.noHomeBookings}</p>
+                <p className="text-sm text-teal-400 mt-1">{t.bookingsAppearHere}</p>
               </div>
             ) : (
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 shadow-sm">
@@ -1273,12 +1275,12 @@ const AdminDashboard = () => {
                     <thead className="bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-600">
                       <tr>
                         <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">#</th>
-                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Patient Name</th>
-                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Phone</th>
-                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">City</th>
-                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Status</th>
-                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Booked On</th>
-                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Actions</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.patientName}</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.phone}</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.city}</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.status}</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.bookedOn}</th>
+                        <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">{t.actions}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-teal-50">
@@ -1324,10 +1326,10 @@ const AdminDashboard = () => {
                                 disabled={updatingBooking === booking._id}
                                 className="px-2.5 py-1.5 rounded-lg border border-teal-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 text-slate-700"
                               >
-                                <option value="pending">Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
+                                <option value="pending">{t.pending}</option>
+                                <option value="confirmed">{t.confirmed}</option>
+                                <option value="completed">{t.completed}</option>
+                                <option value="cancelled">{t.cancelled}</option>
                               </select>
                               <button
                                 onClick={() => deleteBooking(booking._id)}

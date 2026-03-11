@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { BookOpen, Calendar, Clock, Search, ChevronRight } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 const articles = [
   {
@@ -73,6 +74,7 @@ const articles = [
 const categories = ["All", ...new Set(articles.map((a) => a.category))];
 
 const KnowledgeHub = () => {
+  const { t } = useLang();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -92,13 +94,13 @@ const KnowledgeHub = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-6">
             <BookOpen className="w-4 h-4 text-accent" />
-            <span className="text-sm font-semibold text-primary-foreground">Knowledge Hub</span>
+            <span className="text-sm font-semibold text-primary-foreground">{t.knowledgeHubTitle}</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-primary-foreground mb-4">
-            Health Knowledge Hub
+            {t.knowledgeHubTitle}
           </h1>
           <p className="text-primary-foreground/80 max-w-2xl mx-auto text-lg">
-            Expert articles, test guides, and health tips to help you make informed decisions about your health.
+            {t.knowledgeHubSubtitle}
           </p>
         </div>
       </section>
@@ -110,7 +112,7 @@ const KnowledgeHub = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search articles..."
+              placeholder={t.searchArticles}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-11 pr-4 py-3 rounded-full border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground"
@@ -166,7 +168,7 @@ const KnowledgeHub = () => {
           </div>
 
           {filtered.length === 0 && (
-            <p className="text-center text-muted-foreground py-12">No articles found matching your search.</p>
+            <p className="text-center text-muted-foreground py-12">{t.noTestsFound}</p>
           )}
         </div>
       </section>

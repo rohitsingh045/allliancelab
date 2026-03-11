@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { fetchTests, fetchCategories, fetchSampleReports } from "@/api/client.js";
 import SampleReportModal from "@/components/SampleReportModal.jsx";
 import { useCart } from "@/context/CartContext";
+import { useLang } from "@/context/LanguageContext";
 import { toast } from "sonner";
 
 const TestsSection = () => {
@@ -12,6 +13,7 @@ const TestsSection = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedReportTestId, setSelectedReportTestId] = useState(null);
   const { addItem, isInCart } = useCart();
+  const { t } = useLang();
 
   const { data: tests = [] } = useQuery({
     queryKey: ["tests"],
@@ -38,7 +40,7 @@ const TestsSection = () => {
 
   const handleAddToCart = (test) => {
     if (isInCart(test._id, "test")) {
-      toast.info(`${test.name} is already in cart`);
+      toast.info(`${test.name} ${t.alreadyInCart}`);
       return;
     }
     addItem({
@@ -49,8 +51,8 @@ const TestsSection = () => {
       parameters: test.parameters,
       reportTime: test.reportTime,
     });
-    toast.success(`${test.name} added to cart!`, {
-      description: "Go to cart to proceed with booking.",
+    toast.success(`${test.name} ${t.addedToCart}`, {
+      description: t.goToCart,
     });
   };
 
@@ -63,13 +65,13 @@ const TestsSection = () => {
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-sm font-semibold mb-4">
             <Beaker className="w-4 h-4" />
-            Frequently Booked
+            {t.frequentlyBooked}
           </div>
           <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-foreground mb-3">
-            Popular Diagnostic Tests
+            {t.popularDiagnosticTests}
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto">
-            Trusted lab with 99.9% accuracy. Get reports in just 6-24 hours.
+            {t.testsSubtitle}
           </p>
         </div>
 
@@ -79,7 +81,7 @@ const TestsSection = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search tests..."
+              placeholder={t.searchTests}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-11 pr-4 py-3 rounded-full border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
@@ -132,13 +134,13 @@ const TestsSection = () => {
 
                 {/* Parameters */}
                 <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Parameters</span>
+                  <span className="text-muted-foreground">{t.parameters}</span>
                   <span className="font-semibold text-foreground">{test.parameters}</span>
                 </div>
 
                 {/* Pre-requisites */}
                 <div className="flex items-center justify-between text-sm mb-4">
-                  <span className="text-muted-foreground">Pre-requisites</span>
+                  <span className="text-muted-foreground">{t.prerequisites}</span>
                   <span className="font-medium text-foreground text-right text-xs max-w-[55%]">
                     {test.prerequisites}
                   </span>
@@ -157,7 +159,7 @@ const TestsSection = () => {
                     className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
                   >
                     <FileText className="w-3.5 h-3.5" />
-                    Sample
+                    {t.sample}
                   </button>
                   <Button
                     size="sm"
@@ -169,7 +171,7 @@ const TestsSection = () => {
                     }`}
                   >
                     <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
-                    {isInCart(test._id, "test") ? "Added" : "Add"}
+                    {isInCart(test._id, "test") ? t.added : t.add}
                   </Button>
                 </div>
               </div>
@@ -179,7 +181,7 @@ const TestsSection = () => {
 
         {filteredTests.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg">No tests found matching your search.</p>
+            <p className="text-muted-foreground text-lg">{t.noTestsFound}</p>
           </div>
         )}
 

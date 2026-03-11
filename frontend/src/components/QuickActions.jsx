@@ -1,43 +1,45 @@
 import { useNavigate } from "react-router-dom";
 import { TestTube, Package, Download, Upload } from "lucide-react";
-
-const actions = [
-  {
-    icon: TestTube,
-    title: "Book a Test",
-    description: "Browse & book from 500+ tests",
-    gradient: "bg-gradient-primary",
-    action: "scroll",
-    target: "tests-section",
-  },
-  {
-    icon: Package,
-    title: "Health Packages",
-    description: "Comprehensive checkup packages",
-    gradient: "bg-gradient-accent",
-    action: "scroll",
-    target: "health-packages",
-  },
-  {
-    icon: Download,
-    title: "Download Report",
-    description: "Access your reports online",
-    gradient: "bg-gradient-primary",
-    action: "navigate",
-    target: "/download-report",
-  },
-  {
-    icon: Upload,
-    title: "Upload Prescription",
-    description: "Upload & we'll arrange tests",
-    gradient: "bg-gradient-accent",
-    action: "navigate",
-    target: "/upload-prescription",
-  },
-];
+import { useLang } from "@/context/LanguageContext";
 
 const QuickActions = () => {
   const navigate = useNavigate();
+  const { t } = useLang();
+
+  const actions = [
+    {
+      icon: TestTube,
+      title: t.bookATest,
+      description: t.bookATestDesc,
+      gradient: "bg-gradient-primary",
+      action: "scroll",
+      target: "tests-section",
+    },
+    {
+      icon: Package,
+      title: t.healthPackagesAction,
+      description: t.healthPackagesDesc,
+      gradient: "bg-gradient-accent",
+      action: "scroll",
+      target: "health-packages",
+    },
+    {
+      icon: Download,
+      title: t.downloadReport,
+      description: t.downloadReportDesc,
+      gradient: "bg-gradient-primary",
+      action: "navigate",
+      target: "/download-report",
+    },
+    {
+      icon: Upload,
+      title: t.uploadPrescription,
+      description: t.uploadPrescriptionDesc,
+      gradient: "bg-gradient-accent",
+      action: "navigate",
+      target: "/upload-prescription",
+    },
+  ];
 
   const handleClick = (item) => {
     if (item.action === "navigate") {

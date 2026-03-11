@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Download, FileText, Search, AlertCircle, CheckCircle2, RefreshCw, User, FlaskConical, Calendar, Hash, ClipboardList, LogIn, Package } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { useLang } from "@/context/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const DownloadReport = () => {
   const { user, token } = useAuth();
+  const { t } = useLang();
   const [activeTab, setActiveTab] = useState("booked");
 
   // --- Search by ID state ---
@@ -74,7 +76,7 @@ const DownloadReport = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      toast.success("Report downloaded!");
+      toast.success(t.reportDownloaded);
     } catch {
       toast.error("Failed to download report.");
     } finally {
@@ -118,7 +120,7 @@ const DownloadReport = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!uniqueId.trim()) {
-      setError("Please enter a Report ID.");
+      setError(t.pleaseEnterReportId);
       return;
     }
 
@@ -134,10 +136,10 @@ const DownloadReport = () => {
         setReport(data);
       } else {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || "No report found with this ID.");
+        setError(data.error || t.noReportFound);
       }
     } catch {
-      setError("Network error. Please check your connection and try again.");
+      setError("Network error.");
     } finally {
       setLoading(false);
     }
@@ -151,7 +153,7 @@ const DownloadReport = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success("Report downloaded!");
+    toast.success(t.reportDownloaded);
   };
 
   const handleView = () => {
@@ -187,9 +189,9 @@ const DownloadReport = () => {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
             <FileText className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Download Your Report</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">{t.downloadYourReport}</h1>
           <p className="text-muted-foreground">
-            View your booked test reports or search by Report ID to download.
+            {t.downloadReportSubtitle}
           </p>
         </div>
 
@@ -204,7 +206,7 @@ const DownloadReport = () => {
             }`}
           >
             <ClipboardList className="w-4 h-4" />
-            My Booked Reports
+            {t.myBookedReports}
           </button>
           <button
             onClick={() => setActiveTab("search")}
@@ -215,7 +217,7 @@ const DownloadReport = () => {
             }`}
           >
             <Hash className="w-4 h-4" />
-            Search by Report ID
+            {t.searchByReportId}
           </button>
         </div>
 
@@ -226,21 +228,21 @@ const DownloadReport = () => {
               /* Not logged in */
               <div className="bg-card rounded-2xl border border-border p-8 text-center">
                 <LogIn className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-foreground mb-2">Login Required</h3>
+                <h3 className="text-lg font-bold text-foreground mb-2">{t.loginRequired}</h3>
                 <p className="text-muted-foreground mb-4 text-sm">
-                  Please log in to view reports for your booked tests.
+                  {t.loginToViewReports}
                 </p>
                 <Button
                   onClick={() => (window.location.href = "/login")}
                   className="bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold py-3 rounded-xl"
                 >
-                  <LogIn className="w-4 h-4 mr-2" /> Log In
+                  <LogIn className="w-4 h-4 mr-2" /> {t.logIn}
                 </Button>
               </div>
             ) : bookedLoading ? (
               <div className="bg-card rounded-2xl border border-border p-8 text-center">
                 <RefreshCw className="w-10 h-10 text-primary mx-auto mb-3 animate-spin" />
-                <p className="text-muted-foreground font-medium">Loading your reports...</p>
+                <p className="text-muted-foreground font-medium">{t.loadingReports}</p>
               </div>
             ) : bookedError ? (
               <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 text-center">
@@ -251,15 +253,15 @@ const DownloadReport = () => {
                   variant="outline"
                   className="mt-4 rounded-xl"
                 >
-                  <RefreshCw className="w-4 h-4 mr-2" /> Try Again
+                  <RefreshCw className="w-4 h-4 mr-2" /> {t.tryAgain}
                 </Button>
               </div>
             ) : totalBookedReports === 0 ? (
               <div className="bg-card rounded-2xl border border-border p-8 text-center">
                 <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-foreground mb-2">No Reports Yet</h3>
+                <h3 className="text-lg font-bold text-foreground mb-2">{t.noReportsYet}</h3>
                 <p className="text-muted-foreground text-sm mb-1">
-                  Reports for your booked tests will appear here once they are uploaded by the admin.
+                  {t.noReportsDesc}
                 </p>
                 <p className="text-muted-foreground text-sm">
                   You can also use the <button onClick={() => setActiveTab("search")} className="text-primary font-semibold underline underline-offset-2">Search by Report ID</button> tab if you have a unique ID.
@@ -268,7 +270,7 @@ const DownloadReport = () => {
             ) : (
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  {totalBookedReports} report{totalBookedReports !== 1 ? "s" : ""} available for download
+                  {totalBookedReports} {t.reportsAvailable}
                 </p>
                 {bookedOrders.map((order) =>
                   order.items
@@ -320,7 +322,7 @@ const DownloadReport = () => {
                               className="flex-1 rounded-xl"
                             >
                               <FileText className="w-4 h-4 mr-2" />
-                              View Report
+                              {t.viewReport}
                             </Button>
                             <Button
                               onClick={() => handleDownloadBookedReport(order._id, item.index, item.reportFileName)}
@@ -328,9 +330,9 @@ const DownloadReport = () => {
                               className="flex-1 bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold rounded-xl"
                             >
                               {downloadingItem === `${order._id}-${item.index}` ? (
-                                <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Downloading...</>
+                                <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> {t.download}...</>
                               ) : (
-                                <><Download className="w-4 h-4 mr-2" /> Download</>
+                                <><Download className="w-4 h-4 mr-2" /> {t.download}</>
                               )}
                             </Button>
                           </div>
@@ -351,7 +353,7 @@ const DownloadReport = () => {
               <form onSubmit={handleSearch} className="space-y-4">
                 <div>
                   <label className="text-sm font-semibold text-foreground mb-2 block">
-                    Report ID
+                    {t.enterReportId}
                   </label>
                   <div className="relative">
                     <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -359,7 +361,7 @@ const DownloadReport = () => {
                       type="text"
                       value={uniqueId}
                       onChange={(e) => { setUniqueId(e.target.value); setError(""); setReport(null); setSearched(false); }}
-                      placeholder="Enter your Report ID (e.g. RPT-2024-001)"
+                      placeholder={t.reportIdPlaceholder}
                       className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder:text-muted-foreground"
                       autoFocus
                     />
@@ -371,9 +373,9 @@ const DownloadReport = () => {
                   className="w-full bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold py-3 rounded-xl"
                 >
                   {loading ? (
-                    <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Searching...</>
+                    <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> {t.searching}</>
                   ) : (
-                    <><Search className="w-4 h-4 mr-2" /> Find My Report</>
+                    <><Search className="w-4 h-4 mr-2" /> {t.searchReport}</>
                   )}
                 </Button>
               </form>
@@ -398,7 +400,7 @@ const DownloadReport = () => {
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-6 h-6 text-white" />
                     <div>
-                      <h3 className="text-white font-bold text-lg">Report Found!</h3>
+                      <h3 className="text-white font-bold text-lg">{t.reportFound}!</h3>
                       <p className="text-emerald-100 text-sm">Your report is ready to view and download.</p>
                     </div>
                   </div>
@@ -410,14 +412,14 @@ const DownloadReport = () => {
                     <div className="flex items-start gap-3">
                       <Hash className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs text-muted-foreground uppercase font-medium">Report ID</p>
+                        <p className="text-xs text-muted-foreground uppercase font-medium">{t.enterReportId}</p>
                         <p className="font-mono font-bold text-foreground">{report.uniqueId}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <User className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs text-muted-foreground uppercase font-medium">Patient Name</p>
+                        <p className="text-xs text-muted-foreground uppercase font-medium">{t.patientName}</p>
                         <p className="font-semibold text-foreground">{report.patientName}</p>
                       </div>
                     </div>
@@ -425,7 +427,7 @@ const DownloadReport = () => {
                       <div className="flex items-start gap-3">
                         <FlaskConical className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                         <div>
-                          <p className="text-xs text-muted-foreground uppercase font-medium">Test Name</p>
+                          <p className="text-xs text-muted-foreground uppercase font-medium">{t.testName}</p>
                           <p className="font-medium text-foreground">{report.testName}</p>
                         </div>
                       </div>
@@ -446,14 +448,14 @@ const DownloadReport = () => {
                       className="flex-1 py-3 rounded-xl"
                     >
                       <FileText className="w-4 h-4 mr-2" />
-                      View Report
+                      {t.viewReport}
                     </Button>
                     <Button
                       onClick={handleDownload}
                       className="flex-1 bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold py-3 rounded-xl"
                     >
                       <Download className="w-4 h-4 mr-2" />
-                      Download Report
+                      {t.download} {t.report}
                     </Button>
                   </div>
                 </div>

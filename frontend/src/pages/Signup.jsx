@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useLang } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff, User, Phone, ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const Signup = () => {
   const { signup } = useAuth();
+  const { t } = useLang();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -22,7 +24,7 @@ const Signup = () => {
     e.preventDefault();
     setError("");
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t.passwordsDoNotMatch);
       return;
     }
     setLoading(true);
@@ -44,7 +46,7 @@ const Signup = () => {
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Home
+          {t.backToHome}
         </Link>
 
         <div className="bg-card rounded-2xl shadow-xl border border-border p-8">
@@ -52,8 +54,8 @@ const Signup = () => {
             <img src={logo} alt="Alliance Health Hub" className="h-12 w-auto" />
           </div>
 
-          <h1 className="text-2xl font-bold text-center text-foreground mb-1">Create Account</h1>
-          <p className="text-center text-muted-foreground mb-6">Sign up to get started</p>
+          <h1 className="text-2xl font-bold text-center text-foreground mb-1">{t.createAccount}</h1>
+          <p className="text-center text-muted-foreground mb-6">{t.signUpToGetStarted}</p>
 
           {error && (
             <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
@@ -63,7 +65,7 @@ const Signup = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Full Name</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.fullName}</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
@@ -78,7 +80,7 @@ const Signup = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Email Address</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.emailAddress}</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
@@ -94,7 +96,7 @@ const Signup = () => {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">
-                Phone Number <span className="text-muted-foreground">(optional)</span>
+                {t.phoneNumber} <span className="text-muted-foreground">{t.phoneOptional}</span>
               </label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -109,14 +111,14 @@ const Signup = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.password}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min 6 characters"
+                  placeholder={t.minChars}
                   required
                   minLength={6}
                   className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
@@ -132,14 +134,14 @@ const Signup = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Confirm Password</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.confirmPassword}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Repeat your password"
+                  placeholder={t.repeatPassword}
                   required
                   minLength={6}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
@@ -152,14 +154,14 @@ const Signup = () => {
               disabled={loading}
               className="w-full bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold py-2.5"
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? t.creatingAccount : t.createAccount}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
+            {t.alreadyHaveAccount}{" "}
             <Link to="/login" className="text-primary font-medium hover:underline">
-              Login
+              {t.login}
             </Link>
           </p>
         </div>

@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MapPin, Phone, Navigation, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLang } from "@/context/LanguageContext";
 
 const centres = [
   {
@@ -82,6 +83,7 @@ const centres = [
 ];
 
 const CentreVisit = () => {
+  const { t } = useLang();
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -91,13 +93,13 @@ const CentreVisit = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-6">
             <MapPin className="w-4 h-4 text-accent" />
-            <span className="text-sm font-semibold text-primary-foreground">Walk-in Centres</span>
+            <span className="text-sm font-semibold text-primary-foreground">{t.walkInCentres}</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-primary-foreground mb-4">
-            Visit Our Diagnostic Centres
+            {t.visitDiagnosticCentres}
           </h1>
           <p className="text-primary-foreground/80 max-w-2xl mx-auto text-lg">
-            Walk in at any of our diagnostic centres near you. No appointment needed for most tests.
+            {t.centreVisitSubtitle}
           </p>
         </div>
       </section>
@@ -107,10 +109,10 @@ const CentreVisit = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-8">
             {[
-              "No Appointment Needed",
-              "Certified Labs",
-              "Reports in 6–24 Hours",
-              "Affordable Pricing",
+              t.noAppointmentNeeded,
+              t.certifiedLabs,
+              t.reportsIn624Hours,
+              t.affordablePricing,
             ].map((f) => (
               <span key={f} className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <CheckCircle className="w-4 h-4 text-accent" />
@@ -125,7 +127,7 @@ const CentreVisit = () => {
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-center text-foreground mb-12">
-            Our Centres
+            {t.ourCentres}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {centres.map((centre) => (
@@ -153,7 +155,7 @@ const CentreVisit = () => {
                       rel="noopener noreferrer"
                     >
                       <Navigation className="w-3.5 h-3.5 mr-1.5" />
-                      Get Directions
+                      {t.getDirections}
                     </a>
                   </Button>
                   <Button
@@ -164,7 +166,7 @@ const CentreVisit = () => {
                   >
                     <a href={`tel:${centre.phone.split(",")[0].trim()}`}>
                       <Phone className="w-3.5 h-3.5 mr-1.5" />
-                      Call
+                      {t.call}
                     </a>
                   </Button>
                 </div>

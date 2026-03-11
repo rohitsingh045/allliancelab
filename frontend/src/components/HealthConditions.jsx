@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Bone, Heart, Hand, Droplets, Baby, Ribbon, Brain, Eye, Stethoscope, Activity, Users, Calendar } from "lucide-react";
 import { fetchHealthConditions } from "@/api/client.js";
+import { useLang } from "@/context/LanguageContext";
 
 const tabs = [
   { id: "conditions", label: "Health Conditions" },
@@ -47,6 +48,13 @@ const ageGenderData = [
 const HealthConditions = () => {
   const [activeTab, setActiveTab] = useState("conditions");
   const navigate = useNavigate();
+  const { t } = useLang();
+
+  const tabs = [
+    { id: "conditions", label: t.healthConditionsTab },
+    { id: "seasonal", label: t.seasonalPackages },
+    { id: "age-gender", label: t.ageGenderTests },
+  ];
 
   const { data: conditionsFromApi = [] } = useQuery({
     queryKey: ["healthConditions"],

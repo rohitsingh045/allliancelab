@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useLang } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Banknote, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Header from "@/components/Header.jsx";
@@ -13,6 +14,7 @@ const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
   const { user, token } = useAuth();
+  const { t } = useLang();
   const navigate = useNavigate();
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
@@ -28,13 +30,13 @@ const Checkout = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Please login first</h1>
-          <p className="text-muted-foreground mb-6">You need to be logged in to checkout.</p>
+          <h1 className="text-2xl font-bold text-foreground mb-2">{t.pleaseLoginFirst}</h1>
+          <p className="text-muted-foreground mb-6">{t.needLoginCheckout}</p>
           <Button
             className="bg-gradient-primary text-primary-foreground font-semibold"
             onClick={() => navigate("/login")}
           >
-            Go to Login
+            {t.goToLogin}
           </Button>
         </div>
         <Footer />
@@ -54,21 +56,21 @@ const Checkout = () => {
         <Header />
         <div className="container mx-auto px-4 py-20 text-center">
           <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-foreground mb-2">Order Placed Successfully!</h1>
-          <p className="text-muted-foreground mb-1">Your order ID: <span className="font-semibold text-foreground">{orderId}</span></p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">{t.orderPlacedSuccess}</h1>
+          <p className="text-muted-foreground mb-1">{t.yourOrderId}: <span className="font-semibold text-foreground">{orderId}</span></p>
           <p className="text-muted-foreground mb-6">
-            Payment method: <span className="font-semibold text-foreground">{paymentMethod === "cod" ? "Cash on Delivery" : "Online Payment"}</span>
+            {t.paymentMethod}: <span className="font-semibold text-foreground">{paymentMethod === "cod" ? t.cashOnDelivery : t.onlinePayment}</span>
           </p>
           {paymentMethod === "online" && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg inline-block">
-              <p className="text-green-700 font-medium">Payment simulated successfully!</p>
+              <p className="text-green-700 font-medium">{t.paymentSimulated}</p>
             </div>
           )}
           <Button
             className="bg-gradient-primary text-primary-foreground font-semibold"
             onClick={() => navigate("/")}
           >
-            Back to Home
+            {t.backToHomeBtn}
           </Button>
         </div>
         <Footer />
@@ -78,11 +80,11 @@ const Checkout = () => {
 
   const handlePlaceOrder = async () => {
     if (!address.trim()) {
-      toast.error("Please enter your address");
+      toast.error(t.pleaseEnterAddress);
       return;
     }
     if (!phone.trim()) {
-      toast.error("Please enter your phone number");
+      toast.error(t.pleaseEnterPhone);
       return;
     }
 
@@ -121,7 +123,7 @@ const Checkout = () => {
       setOrderId(data.order._id);
       setOrderPlaced(true);
       clearCart();
-      toast.success("Order placed successfully!");
+      toast.success(t.orderPlacedToast);
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -138,20 +140,20 @@ const Checkout = () => {
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Cart
+          {t.backToCart}
         </button>
 
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Checkout</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">{t.checkout}</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left – form */}
           <div className="lg:col-span-2 space-y-6">
             {/* Contact & Address */}
             <div className="bg-card rounded-xl border border-border p-6">
-              <h2 className="font-bold text-lg text-foreground mb-4">Delivery Details</h2>
+              <h2 className="font-bold text-lg text-foreground mb-4">{t.deliveryDetails}</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">Full Name</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{t.fullName}</label>
                   <input
                     type="text"
                     value={user.name}
@@ -160,7 +162,7 @@ const Checkout = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{t.email}</label>
                   <input
                     type="email"
                     value={user.email}
@@ -169,7 +171,7 @@ const Checkout = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">Phone *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{t.phone} *</label>
                   <input
                     type="tel"
                     value={phone}
@@ -180,11 +182,11 @@ const Checkout = () => {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-foreground mb-1.5">Address *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{t.address} *</label>
                   <textarea
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Enter your full address for sample collection"
+                    placeholder={t.enterAddress}
                     rows={3}
                     required
                     className="w-full px-4 py-2.5 rounded-lg border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-foreground placeholder:text-muted-foreground resize-none"
@@ -195,7 +197,7 @@ const Checkout = () => {
 
             {/* Payment Method */}
             <div className="bg-card rounded-xl border border-border p-6">
-              <h2 className="font-bold text-lg text-foreground mb-4">Payment Method</h2>
+              <h2 className="font-bold text-lg text-foreground mb-4">{t.paymentMethodTitle}</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <button
                   onClick={() => setPaymentMethod("cod")}
@@ -207,8 +209,8 @@ const Checkout = () => {
                 >
                   <Banknote className={`w-6 h-6 ${paymentMethod === "cod" ? "text-primary" : "text-muted-foreground"}`} />
                   <div className="text-left">
-                    <p className="font-semibold text-foreground">Cash on Delivery</p>
-                    <p className="text-xs text-muted-foreground">Pay when sample is collected</p>
+                    <p className="font-semibold text-foreground">{t.cashOnDelivery}</p>
+                    <p className="text-xs text-muted-foreground">{t.payWhenCollected}</p>
                   </div>
                 </button>
                 <button
@@ -221,8 +223,8 @@ const Checkout = () => {
                 >
                   <CreditCard className={`w-6 h-6 ${paymentMethod === "online" ? "text-primary" : "text-muted-foreground"}`} />
                   <div className="text-left">
-                    <p className="font-semibold text-foreground">Online Payment</p>
-                    <p className="text-xs text-muted-foreground">Pay now via UPI / Card / Net Banking</p>
+                    <p className="font-semibold text-foreground">{t.onlinePayment}</p>
+                    <p className="text-xs text-muted-foreground">{t.payNowVia}</p>
                   </div>
                 </button>
               </div>
@@ -232,7 +234,7 @@ const Checkout = () => {
           {/* Right – summary */}
           <div className="lg:col-span-1">
             <div className="bg-card rounded-xl border border-border p-6 sticky top-28">
-              <h2 className="font-bold text-lg text-foreground mb-4">Order Summary</h2>
+              <h2 className="font-bold text-lg text-foreground mb-4">{t.orderSummary}</h2>
               <div className="space-y-3 mb-4">
                 {items.map((item) => (
                   <div key={`${item.type}-${item.id}`} className="flex justify-between text-sm">
@@ -243,11 +245,11 @@ const Checkout = () => {
               </div>
               <div className="border-t border-border pt-3 mb-6">
                 <div className="flex justify-between text-lg font-bold text-foreground">
-                  <span>Total</span>
+                  <span>{t.total}</span>
                   <span>₹{totalPrice.toLocaleString("en-IN")}</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {paymentMethod === "cod" ? "Pay at the time of sample collection" : "Pay online securely"}
+                  {paymentMethod === "cod" ? t.payAtCollection : t.payOnlineSecurely}
                 </p>
               </div>
               <Button
@@ -257,11 +259,11 @@ const Checkout = () => {
               >
                 {loading
                   ? paymentMethod === "online"
-                    ? "Processing Payment..."
-                    : "Placing Order..."
+                    ? t.processingPayment
+                    : t.placingOrder
                   : paymentMethod === "online"
-                  ? `Pay ₹${totalPrice.toLocaleString("en-IN")} Now`
-                  : "Place Order (COD)"}
+                  ? `${t.payNow} ₹${totalPrice.toLocaleString("en-IN")} ${t.now}`
+                  : t.placeOrderCOD}
               </Button>
             </div>
           </div>

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useLang } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const Login = () => {
   const { login } = useAuth();
+  const { t } = useLang();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -42,7 +44,7 @@ const Login = () => {
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Home
+          {t.backToHome}
         </Link>
 
         <div className="bg-card rounded-2xl shadow-xl border border-border p-8">
@@ -50,8 +52,8 @@ const Login = () => {
             <img src={logo} alt="Alliance Health Hub" className="h-12 w-auto" />
           </div>
 
-          <h1 className="text-2xl font-bold text-center text-foreground mb-1">Welcome Back</h1>
-          <p className="text-center text-muted-foreground mb-6">Login to your account</p>
+          <h1 className="text-2xl font-bold text-center text-foreground mb-1">{t.welcomeBack}</h1>
+          <p className="text-center text-muted-foreground mb-6">{t.loginToAccount}</p>
 
           {error && (
             <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
@@ -61,7 +63,7 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Email Address</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.emailAddress}</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
@@ -76,14 +78,14 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t.password}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder={t.enterPassword}
                   required
                   minLength={6}
                   className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
@@ -103,14 +105,14 @@ const Login = () => {
               disabled={loading}
               className="w-full bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold py-2.5"
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? t.loggingIn : t.login}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            {t.dontHaveAccount}{" "}
             <Link to="/signup" className="text-primary font-medium hover:underline">
-              Sign up
+              {t.signUp}
             </Link>
           </p>
         </div>

@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { createBooking } from "@/api/client.js";
 import { toast } from "sonner";
+import { useLang } from "@/context/LanguageContext";
 import heroBanner from "@/assets/hero-family.jpg";
 
 const HeroSection = () => {
   const [formData, setFormData] = useState({ name: "", phone: "", city: "Mumbai" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { t } = useLang();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,10 +21,10 @@ const HeroSection = () => {
       await createBooking(formData);
       setSubmitted(true);
       setFormData({ name: "", phone: "", city: "Mumbai" });
-      toast.success("Booking received! We'll call you shortly.");
+      toast.success(t.bookingReceivedToast);
       setTimeout(() => setSubmitted(false), 3000);
     } catch (err) {
-      toast.error("Booking failed. Please try again.");
+      toast.error(t.bookingFailed);
     } finally {
       setLoading(false);
     }
@@ -46,17 +48,17 @@ const HeroSection = () => {
           <div className="space-y-5 animate-fade-in-up">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-accent/30">
               <span className="w-2 h-2 rounded-full bg-accent animate-pulse-gentle" />
-              <span className="text-sm font-semibold text-accent">Trusted Diagnostic Lab</span>
+              <span className="text-sm font-semibold text-accent">{t.trustedDiagnosticLab}</span>
             </div>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold leading-tight text-primary-foreground">
-              Stay ahead of health problems with{" "}
-              <span className="text-accent">regular health check-ups</span>
+              {t.heroTitle}{" "}
+              <span className="text-accent">{t.heroHighlight}</span>
             </h2>
 
             <div className="bg-primary/20 backdrop-blur-sm rounded-xl px-6 py-4 border border-primary/30 inline-block">
               <p className="text-primary-foreground font-heading font-bold text-lg">
-                Health Packages Starting from{" "}
+                {t.packagesStartingFrom}{" "}
                 <span className="text-accent text-2xl">₹349</span>
               </p>
             </div>
@@ -69,7 +71,7 @@ const HeroSection = () => {
                 if (el) el.scrollIntoView({ behavior: "smooth" });
               }}
             >
-              Explore Packages
+              {t.explorePackages}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
@@ -78,23 +80,23 @@ const HeroSection = () => {
           <div className="flex justify-end">
             <div className="bg-card/95 backdrop-blur-md rounded-2xl p-6 shadow-elevated w-full max-w-sm border border-border">
               <h3 className="font-heading font-bold text-xl text-foreground mb-1">
-                Book Free Home Collection
+                {t.bookFreeHomeCollection}
               </h3>
               <p className="text-sm text-muted-foreground mb-5">
-                Our phlebotomist will visit your home
+                {t.phlebotomistVisit}
               </p>
 
               {submitted ? (
                 <div className="flex flex-col items-center py-8 text-center gap-3">
                   <CheckCircle className="w-12 h-12 text-accent" />
-                  <p className="font-heading font-bold text-lg text-foreground">Booking Received!</p>
-                  <p className="text-sm text-muted-foreground">We'll call you shortly to confirm.</p>
+                  <p className="font-heading font-bold text-lg text-foreground">{t.bookingReceived}</p>
+                  <p className="text-sm text-muted-foreground">{t.callYouShortly}</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <input
                     type="text"
-                    placeholder="Full Name"
+                    placeholder={t.fullName}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
@@ -103,7 +105,7 @@ const HeroSection = () => {
                   />
                   <input
                     type="tel"
-                    placeholder="Contact Number"
+                    placeholder={t.contactNumber}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "").slice(0, 10) })}
                     className="w-full px-4 py-3 rounded-xl border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
@@ -125,7 +127,7 @@ const HeroSection = () => {
                     disabled={loading}
                     className="w-full bg-gradient-primary hover:opacity-90 text-primary-foreground font-bold py-6 rounded-xl text-base"
                   >
-                    {loading ? "Submitting..." : "Book Free Home Collection"}
+                    {loading ? t.submitting : t.bookFreeHomeCollection}
                   </Button>
                 </form>
               )}
