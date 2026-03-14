@@ -3,7 +3,7 @@ import { X, Search, MapPin } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
 
 const topCities = [
-  "Bangalore", "Bhopal", "Bhubaneshwar", "Chennai", "Guwahati", "Hyderabad",
+ "Patna", "Bangalore", "Bhopal", "Bhubaneshwar", "Chennai", "Guwahati", "Hyderabad",
   "Indore", "Kolkata", "Mumbai", "Nagpur", "Pune",
 ];
 

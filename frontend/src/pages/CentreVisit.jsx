@@ -96,7 +96,7 @@ const centres = [
     phone: "6200488170",
   },
   {
-    name: "Alliance Diagnostic — Ernakulam",
+    name: "Alliance Diagnostic — Kerala",
     address: "Chittoor Rd, Shenoys, Ernakulam, Kerala 682035",
     phone: "0484 4022251",
   },
