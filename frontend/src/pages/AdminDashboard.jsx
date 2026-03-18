@@ -71,6 +71,7 @@ const AdminDashboard = () => {
   const [deletingReport, setDeletingReport] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [updatingBooking, setUpdatingBooking] = useState(null);
+  const [deletingUser, setDeletingUser] = useState(null);
 
   const token = localStorage.getItem("auth_token");
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
@@ -311,6 +312,50 @@ const AdminDashboard = () => {
       console.error(err);
     } finally {
       setUpdatingBooking(null);
+    }
+  };
+
+  const deleteUserAndOrders = async (userId, userName = "this user") => {
+    if (!userId) return;
+    const ok = window.confirm(`Delete ${userName} and all of their orders? This cannot be undone.`);
+    if (!ok) return;
+
+    setDeletingUser(userId);
+    try {
+      const res = await fetch(`${API_BASE}/admin/users/${userId}`, {
+        method: "DELETE",
+        headers,
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data.error || "Failed to delete user.");
+        return;
+      }
+
+      const deletedCount = Number(data.deletedOrdersCount || 0);
+      const deletedRevenue = Number(data.deletedPaidRevenue || 0);
+
+      setOrders((prev) => prev.filter((o) => (o.user?._id || o.user) !== userId));
+      setSearchResults((prev) => prev.filter((u) => u.id !== userId));
+      setExpandedUser((prev) => (prev === userId ? null : prev));
+      setStats((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          totalUsers: Math.max(0, (prev.totalUsers || 0) - 1),
+          totalOrders: Math.max(0, (prev.totalOrders || 0) - deletedCount),
+          totalRevenue: Math.max(0, (prev.totalRevenue || 0) - deletedRevenue),
+          recentOrders: (prev.recentOrders || []).filter((o) => (o.user?._id || o.user) !== userId),
+        };
+      });
+
+      alert(`User deleted. Removed ${deletedCount} order(s).`);
+    } catch (err) {
+      console.error(err);
+      alert("Network error. Please try again.");
+    } finally {
+      setDeletingUser(null);
     }
   };
 
@@ -742,6 +787,22 @@ const AdminDashboard = () => {
                         <option value="paid">{t.paid}</option>
                         <option value="failed">{t.failed}</option>
                       </select>
+
+                      {order.user?._id && (
+                        <button
+                          type="button"
+                          onClick={() => deleteUserAndOrders(order.user._id, order.user?.name || "this user")}
+                          disabled={deletingUser === order.user._id}
+                          className="mt-2 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 disabled:opacity-60"
+                        >
+                          {deletingUser === order.user._id ? (
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-3.5 h-3.5" />
+                          )}
+                          Delete User + Orders
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -869,6 +930,19 @@ const AdminDashboard = () => {
                       <span className="bg-teal-100 text-teal-700 border border-teal-200 text-xs font-medium px-2.5 py-1 rounded-full">
                         {user.totalOrders} test{user.totalOrders !== 1 ? "s" : ""}
                       </span>
+                      <button
+                        type="button"
+                        onClick={() => deleteUserAndOrders(user.id, user.name)}
+                        disabled={deletingUser === user.id}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 disabled:opacity-60"
+                      >
+                        {deletingUser === user.id ? (
+                          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-3.5 h-3.5" />
+                        )}
+                        Delete User
+                      </button>
                       <button
                         onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}
                         className="text-sm text-teal-600 font-medium hover:text-teal-700 flex items-center gap-1 transition-colors"

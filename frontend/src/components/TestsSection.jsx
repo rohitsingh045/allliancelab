@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { Search, Clock, FileText, ShoppingCart, Beaker } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,49 @@ const TestsSection = () => {
   const [selectedReportTestId, setSelectedReportTestId] = useState(null);
   const { addItem, isInCart } = useCart();
   const { t } = useLang();
+  const { user } = useAuth();
+
+  // For editing
+  const [editingTestId, setEditingTestId] = useState(null);
+  const [editForm, setEditForm] = useState({ name: "", price: "" });
+  // Handle edit button click
+  const handleEditClick = (test) => {
+    setEditingTestId(test._id);
+    setEditForm({ name: test.name, price: test.price });
+  };
+
+  // Handle edit form change
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle save edit
+  const handleEditSave = async (testId) => {
+    try {
+      // Call backend API to update test (adjust endpoint as needed)
+      const res = await fetch(`/api/tests/${testId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}),
+        },
+        body: JSON.stringify(editForm),
+      });
+      if (!res.ok) throw new Error("Failed to update test");
+      toast.success("Test updated successfully");
+      setEditingTestId(null);
+      // Optionally: refetch tests or update state locally
+      window.location.reload(); // quick way to refresh
+    } catch (err) {
+      toast.error("Error updating test");
+    }
+  };
+
+  // Handle cancel edit
+  const handleEditCancel = () => {
+    setEditingTestId(null);
+  };
 
   const { data: tests = [] } = useQuery({
     queryKey: ["tests"],
@@ -127,10 +171,22 @@ const TestsSection = () => {
                   </span>
                 </div>
 
-                {/* Test Name */}
-                <h3 className="font-heading font-bold text-foreground text-base md:text-lg mb-4 leading-snug">
-                  {test.name}
-                </h3>
+                {/* Test Name (editable for admin) */}
+                {user?.role === "admin" && editingTestId === test._id ? (
+                  <>
+                    <input
+                      type="text"
+                      name="name"
+                      value={editForm.name}
+                      onChange={handleEditChange}
+                      className="mb-2 px-2 py-1 border rounded w-full"
+                    />
+                  </>
+                ) : (
+                  <h3 className="font-heading font-bold text-foreground text-base md:text-lg mb-4 leading-snug">
+                    {test.name}
+                  </h3>
+                )}
 
                 {/* Parameters */}
                 <div className="flex items-center justify-between text-sm mb-2">
@@ -150,9 +206,20 @@ const TestsSection = () => {
               {/* Divider + Footer */}
               <div className="border-t border-border mx-5" />
               <div className="px-5 py-4 flex items-center justify-between">
-                <span className="text-2xl font-heading font-extrabold text-foreground">
-                  ₹{test.price}
-                </span>
+                {/* Price (editable for admin) */}
+                {user?.role === "admin" && editingTestId === test._id ? (
+                  <input
+                    type="number"
+                    name="price"
+                    value={editForm.price}
+                    onChange={handleEditChange}
+                    className="mr-2 px-2 py-1 border rounded w-24"
+                  />
+                ) : (
+                  <span className="text-2xl font-heading font-extrabold text-foreground">
+                    ₹{test.price}
+                  </span>
+                )}
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setSelectedReportTestId(test._id)}
@@ -161,18 +228,35 @@ const TestsSection = () => {
                     <FileText className="w-3.5 h-3.5" />
                     {t.sample}
                   </button>
-                  <Button
-                    size="sm"
-                    onClick={() => handleAddToCart(test)}
-                    className={`font-semibold rounded-lg px-4 ${
-                      isInCart(test._id, "test")
-                        ? "bg-green-600 hover:bg-green-600 text-white"
-                        : "bg-gradient-primary hover:opacity-90 text-primary-foreground"
-                    }`}
-                  >
-                    <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
-                    {isInCart(test._id, "test") ? t.added : t.add}
-                  </Button>
+                  {user?.role === "admin" ? (
+                    editingTestId === test._id ? (
+                      <>
+                        <Button size="sm" className="bg-green-600 text-white mr-2" onClick={() => handleEditSave(test._id)}>
+                          Save
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={handleEditCancel}>
+                          Cancel
+                        </Button>
+                      </>
+                    ) : (
+                      <Button size="sm" className="bg-blue-600 text-white" onClick={() => handleEditClick(test)}>
+                        Edit
+                      </Button>
+                    )
+                  ) : (
+                    <Button
+                      size="sm"
+                      onClick={() => handleAddToCart(test)}
+                      className={`font-semibold rounded-lg px-4 ${
+                        isInCart(test._id, "test")
+                          ? "bg-green-600 hover:bg-green-600 text-white"
+                          : "bg-gradient-primary hover:opacity-90 text-primary-foreground"
+                      }`}
+                    >
+                      <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                      {isInCart(test._id, "test") ? t.added : t.add}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

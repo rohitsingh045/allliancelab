@@ -1,20 +1,7 @@
 import { useState } from "react";
-import { X, Search, MapPin } from "lucide-react";
+import { X, Search } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
-
-const topCities = [
- "Patna", "Bangalore", "Bhopal", "Bhubaneshwar", "Chennai", "Guwahati", "Hyderabad",
-  "Indore", "Kolkata", "Mumbai", "Nagpur", "Pune",
-];
-
-const allCities = [
-  "Ahmednagar", "Andheri", "Bankura", "Basti", "Berhampore", "Borivali",
-  "Burdwan", "Coimbatore", "Dhanbad", "Dibrugarh", "Giridih", "Goa",
-  "Jabalpur", "Jalgaon", "Jalna", "Kalyan", "Kolhapur", "Latur",
-  "Lucknow", "Muzaffarpur", "Nashik", "Navi Mumbai", "Panvel", "Patna",
-  "Prayagraj", "Raipur", "Ranchi", "Satara", "Silchar", "Siliguri",
-  "Solapur", "Varanasi", "Vijayawada",
-];
+import { centreCities, topCentreCities } from "@/lib/centreLocations";
 
 const CitySelector = ({ open, onClose, selectedCity, onSelectCity }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,7 +9,7 @@ const CitySelector = ({ open, onClose, selectedCity, onSelectCity }) => {
 
   if (!open) return null;
 
-  const filteredCities = allCities.filter((c) =>
+  const filteredCities = centreCities.filter((c) =>
     c.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -47,7 +34,7 @@ const CitySelector = ({ open, onClose, selectedCity, onSelectCity }) => {
           <div>
             <h3 className="text-base font-heading font-bold text-foreground mb-3">{t.topSearchedCities}</h3>
             <div className="flex flex-wrap gap-2">
-              {topCities.map((city) => (
+              {topCentreCities.map((city) => (
                 <button
                   key={city}
                   onClick={() => handleSelect(city)}

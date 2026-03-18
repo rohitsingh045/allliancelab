@@ -187,6 +187,45 @@ router.get("/users/search", adminAuth, async (req, res) => {
   }
 });
 
+// DELETE /api/admin/users/:id - delete user and their related orders
+router.delete("/users/:id", adminAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    if (user.role === "admin") return res.status(403).json({ error: "Cannot delete admin user" });
+
+    const stats = await Order.aggregate([
+      { $match: { user: user._id } },
+      {
+        $group: {
+          _id: null,
+          paidRevenue: {
+            $sum: {
+              $cond: [{ $eq: ["$paymentStatus", "paid"] }, "$totalPrice", 0],
+            },
+          },
+        },
+      },
+    ]);
+
+    const deletedOrders = await Order.deleteMany({ user: user._id });
+    const deletedPrescriptions = await Prescription.deleteMany({ user: user._id });
+    await Notification.deleteMany({ recipientId: user._id.toString() });
+    await User.findByIdAndDelete(user._id);
+
+    res.json({
+      success: true,
+      deletedUserId: user._id,
+      deletedOrdersCount: deletedOrders.deletedCount || 0,
+      deletedPrescriptionsCount: deletedPrescriptions.deletedCount || 0,
+      deletedPaidRevenue: stats[0]?.paidRevenue || 0,
+    });
+  } catch (err) {
+    console.error("Delete user error:", err);
+    res.status(500).json({ error: "Failed to delete user" });
+  }
+});
+
 // GET /api/admin/stats - dashboard stats
 router.get("/stats", adminAuth, async (req, res) => {
   try {

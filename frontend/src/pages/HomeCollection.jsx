@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Home, Clock, Shield, MapPin, Phone } from "lucide-react";
 import { createBooking } from "@/api/client.js";
 import { useLang } from "@/context/LanguageContext";
+import { centreCities, defaultCentreCity } from "@/lib/centreLocations";
 
 const HomeCollection = () => {
   const { t } = useLang();
@@ -22,7 +23,7 @@ const HomeCollection = () => {
     { icon: Shield, title: t.certifiedLabs, desc: t.certifiedLabsDesc },
     { icon: MapPin, title: t.wideCoverage, desc: t.wideCoverageDesc },
   ];
-  const [formData, setFormData] = useState({ name: "", phone: "", city: "Mumbai" });
+  const [formData, setFormData] = useState({ name: "", phone: "", city: defaultCentreCity });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -33,7 +34,7 @@ const HomeCollection = () => {
     try {
       await createBooking(formData);
       setSubmitted(true);
-      setFormData({ name: "", phone: "", city: "Mumbai" });
+      setFormData({ name: "", phone: "", city: defaultCentreCity });
       setTimeout(() => setSubmitted(false), 4000);
     } catch {
       // silently fail
@@ -145,7 +146,7 @@ const HomeCollection = () => {
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground"
               >
-                {["Mumbai", "Delhi", "Bangalore", "Chennai", "Hyderabad", "Pune", "Kolkata", "Nagpur"].map((c) => (
+                {centreCities.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>

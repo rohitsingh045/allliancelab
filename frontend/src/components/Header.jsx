@@ -9,10 +9,11 @@ import { useLang } from "@/context/LanguageContext";
 import NotificationBell from "@/components/NotificationBell";
 import LanguageSelector from "@/components/LanguageSelector";
 import logo from "@/assets/logo.png";
+import { defaultCentreCity } from "@/lib/centreLocations";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [city, setCity] = useState("Nagpur");
+  const [city, setCity] = useState(defaultCentreCity);
   const [cityOpen, setCityOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { user, token, logout } = useAuth();

@@ -5,9 +5,10 @@ import { createBooking } from "@/api/client.js";
 import { toast } from "sonner";
 import { useLang } from "@/context/LanguageContext";
 import heroBanner from "@/assets/hero-family.jpg";
+import { centreCities, defaultCentreCity } from "@/lib/centreLocations";
 
 const HeroSection = () => {
-  const [formData, setFormData] = useState({ name: "", phone: "", city: "Mumbai" });
+  const [formData, setFormData] = useState({ name: "", phone: "", city: defaultCentreCity });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const { t } = useLang();
@@ -20,7 +21,7 @@ const HeroSection = () => {
     try {
       await createBooking(formData);
       setSubmitted(true);
-      setFormData({ name: "", phone: "", city: "Mumbai" });
+      setFormData({ name: "", phone: "", city: defaultCentreCity });
       toast.success(t.bookingReceivedToast);
       setTimeout(() => setSubmitted(false), 3000);
     } catch (err) {
@@ -118,7 +119,7 @@ const HeroSection = () => {
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-foreground"
                   >
-                    {["Mumbai", "Delhi", "Bangalore", "Chennai", "Hyderabad", "Pune", "Kolkata"].map((c) => (
+                    {centreCities.map((c) => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
