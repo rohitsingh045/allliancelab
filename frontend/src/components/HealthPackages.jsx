@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Clock, FlaskConical, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fetchHealthPackages } from "@/api/client.js";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { useLang } from "@/context/LanguageContext";
 import { toast } from "sonner";
 
@@ -11,6 +12,44 @@ const HealthPackages = () => {
   const scrollRef = useRef(null);
   const { addItem, isInCart } = useCart();
   const { t } = useLang();
+  const { user, token } = useAuth();
+
+  // Admin edit state
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({ name: "", price: "" });
+
+  const handleEditClick = (pkg) => {
+    setEditingId(pkg._id);
+    setEditForm({ name: pkg.name, price: pkg.price });
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSave = async (pkgId) => {
+    try {
+      const res = await fetch(`/api/health-packages/${pkgId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(editForm),
+      });
+      if (!res.ok) throw new Error("Failed to update package");
+      toast.success(t.packageUpdated || "Package updated successfully");
+      setEditingId(null);
+      window.location.reload();
+    } catch (err) {
+      toast.error(t.errorUpdatingPackage || "Error updating package");
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditingId(null);
+  };
 
   const { data: packages = [] } = useQuery({
     queryKey: ["healthPackages"],
@@ -104,12 +143,32 @@ const HealthPackages = () => {
                 {/* Purple header */}
                 <div className="bg-gradient-primary rounded-t-2xl p-5 pb-4">
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <h3 className="font-heading font-bold text-primary-foreground text-sm leading-snug flex-1">
-                      {pkg.name}
-                    </h3>
-                    <span className="text-xl font-heading font-extrabold text-primary-foreground whitespace-nowrap">
-                      ₹ {pkg.price.toLocaleString("en-IN")}
-                    </span>
+                    {user?.role === "admin" && editingId === pkg._id ? (
+                      <input
+                        type="text"
+                        name="name"
+                        value={editForm.name}
+                        onChange={handleEditChange}
+                        className="mb-2 px-2 py-1 border rounded w-full"
+                      />
+                    ) : (
+                      <h3 className="font-heading font-bold text-primary-foreground text-sm leading-snug flex-1">
+                        {pkg.name}
+                      </h3>
+                    )}
+                    {user?.role === "admin" && editingId === pkg._id ? (
+                      <input
+                        type="number"
+                        name="price"
+                        value={editForm.price}
+                        onChange={handleEditChange}
+                        className="mb-2 px-2 py-1 border rounded w-24"
+                      />
+                    ) : (
+                      <span className="text-xl font-heading font-extrabold text-primary-foreground whitespace-nowrap">
+                        ₹ {pkg.price.toLocaleString("en-IN")}
+                      </span>
+                    )}
                   </div>
                   <p className="text-primary-foreground/80 text-sm">
                     {pkg.parameters} {t.testParameters}
@@ -145,17 +204,34 @@ const HealthPackages = () => {
                         <input type="checkbox" className="w-4 h-4 rounded border-border accent-primary" />
                         {t.compare}
                       </label>
-                      <Button
-                        size="sm"
-                        onClick={() => handleAddToCart(pkg)}
-                        className={`font-semibold rounded-lg px-4 whitespace-nowrap ${
-                          isInCart(pkg._id, "package")
-                            ? "bg-green-600 hover:bg-green-600 text-white"
-                            : "bg-accent hover:bg-accent/90 text-accent-foreground"
-                        }`}
-                      >
-                        {isInCart(pkg._id, "package") ? t.addedCheck : t.addToCart}
-                      </Button>
+                      {user?.role === "admin" ? (
+                        editingId === pkg._id ? (
+                          <>
+                            <Button size="sm" className="bg-green-600 text-white mr-2" onClick={() => handleEditSave(pkg._id)}>
+                              {t.save || "Save"}
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={handleEditCancel}>
+                              {t.cancel || "Cancel"}
+                            </Button>
+                          </>
+                        ) : (
+                          <Button size="sm" className="bg-blue-600 text-white" onClick={() => handleEditClick(pkg)}>
+                            {t.edit || "Edit"}
+                          </Button>
+                        )
+                      ) : (
+                        <Button
+                          size="sm"
+                          onClick={() => handleAddToCart(pkg)}
+                          className={`font-semibold rounded-lg px-4 whitespace-nowrap ${
+                            isInCart(pkg._id, "package")
+                              ? "bg-green-600 hover:bg-green-600 text-white"
+                              : "bg-accent hover:bg-accent/90 text-accent-foreground"
+                          }`}
+                        >
+                          {isInCart(pkg._id, "package") ? t.addedCheck : t.addToCart}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
