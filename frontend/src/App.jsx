@@ -1,4 +1,5 @@
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import WhatsAppButton from "./components/WhatsAppButton";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/health-conditions/:slug" element={<HealthConditionDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <WhatsAppButton />
           </CartProvider>
         </AuthProvider>
         </LanguageProvider>
