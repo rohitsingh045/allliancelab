@@ -16,11 +16,32 @@ export function CartProvider({ children }) {
     localStorage.setItem("cart_items", JSON.stringify(items));
   }, [items]);
 
+
+  // Add item or increment quantity
   const addItem = (item) => {
     setItems((prev) => {
       const exists = prev.find((i) => i.id === item.id && i.type === item.type);
-      if (exists) return prev;
+      if (exists) {
+        return prev.map((i) =>
+          i.id === item.id && i.type === item.type
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
+        );
+      }
       return [...prev, { ...item, quantity: 1 }];
+    });
+  };
+
+  // Decrement quantity or remove item
+  const decrementItem = (id, type) => {
+    setItems((prev) => {
+      return prev
+        .map((i) =>
+          i.id === id && i.type === type
+            ? { ...i, quantity: i.quantity - 1 }
+            : i
+        )
+        .filter((i) => i.quantity > 0);
     });
   };
 
@@ -31,12 +52,26 @@ export function CartProvider({ children }) {
   const clearCart = () => setItems([]);
 
   const isInCart = (id, type) => items.some((i) => i.id === id && i.type === type);
+  const getQuantity = (id, type) => {
+    const found = items.find((i) => i.id === id && i.type === type);
+    return found ? found.quantity : 0;
+  };
 
   const totalPrice = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const totalItems = items.length;
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, clearCart, isInCart, totalPrice, totalItems }}>
+    <CartContext.Provider value={{
+      items,
+      addItem,
+      decrementItem,
+      removeItem,
+      clearCart,
+      isInCart,
+      getQuantity,
+      totalPrice,
+      totalItems
+    }}>
       {children}
     </CartContext.Provider>
   );

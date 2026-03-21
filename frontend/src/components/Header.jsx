@@ -185,6 +185,10 @@ const Header = () => {
       {mobileOpen && (
         <div className="md:hidden border-t border-border bg-card">
           <div className="p-4 space-y-3">
+            {/* Language Selector for mobile */}
+            <div className="flex justify-end mb-2">
+              <LanguageSelector />
+            </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input

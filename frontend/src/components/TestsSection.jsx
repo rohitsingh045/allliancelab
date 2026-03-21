@@ -13,7 +13,7 @@ const TestsSection = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedReportTestId, setSelectedReportTestId] = useState(null);
-  const { addItem, isInCart } = useCart();
+  const { addItem, decrementItem, isInCart, getQuantity } = useCart();
   const { t } = useLang();
   const { user } = useAuth();
 
@@ -83,10 +83,6 @@ const TestsSection = () => {
   }, [tests, searchQuery, activeCategory]);
 
   const handleAddToCart = (test) => {
-    if (isInCart(test._id, "test")) {
-      toast.info(`${test.name} ${t.alreadyInCart}`);
-      return;
-    }
     addItem({
       id: test._id,
       type: "test",
@@ -98,6 +94,11 @@ const TestsSection = () => {
     toast.success(`${test.name} ${t.addedToCart}`, {
       description: t.goToCart,
     });
+  };
+
+  const handleDecrement = (test) => {
+    decrementItem(test._id, "test");
+    toast.info(`${test.name} ${t.removedFromCart}`);
   };
 
   const selectedReport = sampleReports.find((r) => r.test?._id === selectedReportTestId || r.test === selectedReportTestId) || null;
@@ -244,18 +245,34 @@ const TestsSection = () => {
                       </Button>
                     )
                   ) : (
-                    <Button
-                      size="sm"
-                      onClick={() => handleAddToCart(test)}
-                      className={`font-semibold rounded-lg px-4 ${
-                        isInCart(test._id, "test")
-                          ? "bg-green-600 hover:bg-green-600 text-white"
-                          : "bg-gradient-primary hover:opacity-90 text-primary-foreground"
-                      }`}
-                    >
-                      <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
-                      {isInCart(test._id, "test") ? t.added : t.add}
-                    </Button>
+                    isInCart(test._id, "test") ? (
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="icon"
+                          className="bg-gradient-primary text-primary-foreground font-bold px-2 py-1"
+                          onClick={() => handleDecrement(test)}
+                        >
+                          -
+                        </Button>
+                        <span className="font-semibold text-lg px-2">{getQuantity(test._id, "test")}</span>
+                        <Button
+                          size="icon"
+                          className="bg-gradient-primary text-primary-foreground font-bold px-2 py-1"
+                          onClick={() => handleAddToCart(test)}
+                        >
+                          +
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddToCart(test)}
+                        className="font-semibold rounded-lg px-4 bg-gradient-primary hover:opacity-90 text-primary-foreground"
+                      >
+                        <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                        {t.add}
+                      </Button>
+                    )
                   )}
                 </div>
               </div>

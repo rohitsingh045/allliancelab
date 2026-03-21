@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 const HealthPackages = () => {
   const scrollRef = useRef(null);
-  const { addItem, isInCart } = useCart();
+  const { addItem, decrementItem, isInCart, getQuantity } = useCart();
   const { t } = useLang();
   const { user, token } = useAuth();
 
@@ -66,10 +66,6 @@ const HealthPackages = () => {
   };
 
   const handleAddToCart = (pkg) => {
-    if (isInCart(pkg._id, "package")) {
-      toast.info(`${pkg.name} ${t.alreadyInCart}`);
-      return;
-    }
     addItem({
       id: pkg._id,
       type: "package",
@@ -81,6 +77,11 @@ const HealthPackages = () => {
     toast.success(`${pkg.name} ${t.addedToCart}`, {
       description: t.goToCart,
     });
+  };
+
+  const handleDecrement = (pkg) => {
+    decrementItem(pkg._id, "package");
+    toast.info(`${pkg.name} ${t.removedFromCart || "Removed from cart"}`);
   };
 
   if (packages.length === 0) return null;
@@ -220,17 +221,33 @@ const HealthPackages = () => {
                           </Button>
                         )
                       ) : (
-                        <Button
-                          size="sm"
-                          onClick={() => handleAddToCart(pkg)}
-                          className={`font-semibold rounded-lg px-4 whitespace-nowrap ${
-                            isInCart(pkg._id, "package")
-                              ? "bg-green-600 hover:bg-green-600 text-white"
-                              : "bg-accent hover:bg-accent/90 text-accent-foreground"
-                          }`}
-                        >
-                          {isInCart(pkg._id, "package") ? t.addedCheck : t.addToCart}
-                        </Button>
+                        isInCart(pkg._id, "package") ? (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="icon"
+                              className="bg-accent text-accent-foreground font-bold px-2 py-1"
+                              onClick={() => handleDecrement(pkg)}
+                            >
+                              -
+                            </Button>
+                            <span className="font-semibold text-lg px-2">{getQuantity(pkg._id, "package")}</span>
+                            <Button
+                              size="icon"
+                              className="bg-accent text-accent-foreground font-bold px-2 py-1"
+                              onClick={() => handleAddToCart(pkg)}
+                            >
+                              +
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            onClick={() => handleAddToCart(pkg)}
+                            className="font-semibold rounded-lg px-4 whitespace-nowrap bg-accent hover:bg-accent/90 text-accent-foreground"
+                          >
+                            {t.addToCart}
+                          </Button>
+                        )
                       )}
                     </div>
                   </div>
