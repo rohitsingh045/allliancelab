@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -6,12 +7,14 @@ import { Download, FileText, Search, AlertCircle, CheckCircle2, RefreshCw, User,
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useLang } from "@/context/LanguageContext";
+import QRCode from "react-qr-code";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const DownloadReport = () => {
   const { user, token } = useAuth();
   const { t } = useLang();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("booked");
 
   // --- Search by ID state ---
@@ -20,6 +23,37 @@ const DownloadReport = () => {
   const [report, setReport] = useState(null);
   const [error, setError] = useState("");
   const [searched, setSearched] = useState(false);
+
+  // --- Auto-search if ID is in URL (from QR scan) ---
+  useEffect(() => {
+    const idFromUrl = searchParams.get("id");
+    if (idFromUrl) {
+      setUniqueId(idFromUrl);
+      setActiveTab("search");
+      autoSearch(idFromUrl);
+    }
+  }, [searchParams]);
+
+  const autoSearch = async (id) => {
+    setLoading(true);
+    setError("");
+    setReport(null);
+    setSearched(true);
+    try {
+      const res = await fetch(`${API_BASE}/reports/download/${encodeURIComponent(id)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setReport(data);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || t.noReportFound);
+      }
+    } catch {
+      setError("Network error.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // --- Booked reports state ---
   const [bookedOrders, setBookedOrders] = useState([]);
@@ -441,22 +475,33 @@ const DownloadReport = () => {
                     </div>
                   </div>
 
-                  <div className="border-t border-border pt-4 flex flex-col sm:flex-row gap-3">
-                    <Button
-                      onClick={handleView}
-                      variant="outline"
-                      className="flex-1 py-3 rounded-xl"
-                    >
-                      <FileText className="w-4 h-4 mr-2" />
-                      {t.viewReport}
-                    </Button>
-                    <Button
-                      onClick={handleDownload}
-                      className="flex-1 bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold py-3 rounded-xl"
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      {t.download} {t.report}
-                    </Button>
+                  <div className="border-t border-border pt-4 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                      <Button
+                        onClick={handleView}
+                        variant="outline"
+                        className="flex-1 sm:flex-none py-3 rounded-xl"
+                      >
+                        <FileText className="w-4 h-4 mr-2" />
+                        {t.viewReport}
+                      </Button>
+                      <Button
+                        onClick={handleDownload}
+                        className="flex-1 sm:flex-none bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold py-3 rounded-xl"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        {t.download} {t.report}
+                      </Button>
+                    </div>
+                    <div className="p-2 bg-white rounded-lg border border-border mt-4 sm:mt-0 shadow-sm flex flex-col items-center">
+                      <span className="text-[10px] text-muted-foreground mb-1 font-semibold">Scan to View/Download</span>
+                      <QRCode 
+                        value={`${window.location.origin}/download-report?id=${report.uniqueId}`}
+                        size={80} 
+                        fgColor="#000000" 
+                        level="H"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

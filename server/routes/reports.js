@@ -2,6 +2,7 @@ import express from "express";
 import Report from "../models/Report.js";
 import Notification from "../models/Notification.js";
 import User from "../models/User.js";
+import Order from "../models/Order.js";
 import { verifyToken } from "../lib/authHelpers.js";
 
 const router = express.Router();
@@ -109,8 +110,31 @@ router.get("/download/:uniqueId", async (req, res) => {
   try {
     const { uniqueId } = req.params;
     if (!uniqueId?.trim()) return res.status(400).json({ error: "Unique ID is required" });
+    const trimmedId = uniqueId.trim();
 
-    const report = await Report.findOne({ uniqueId: uniqueId.trim() });
+    // Check if the uniqueId is in the format of "orderId-itemIndex"
+    if (trimmedId.includes("-")) {
+      const [orderId, itemIndexStr] = trimmedId.split("-");
+      if (orderId.length === 24) {  // typical mongoose ObjectId length
+        const order = await Order.findById(orderId).populate("user", "name");
+        if (order) {
+          const itemIndex = parseInt(itemIndexStr, 10);
+          const item = order.items.find(i => i.index === itemIndex);
+          if (item && item.hasReport && item.reportFile) {
+            return res.json({
+              uniqueId: trimmedId,
+              patientName: order.patientDetails?.name || order.user?.name || "Patient",
+              testName: item.name,
+              reportFile: item.reportFile,
+              reportFileName: item.reportFileName || "report.pdf",
+              uploadedAt: item.reportUploadedAt || order.updatedAt,
+            });
+          }
+        }
+      }
+    }
+
+    const report = await Report.findOne({ uniqueId: trimmedId });
     if (!report) {
       return res.status(404).json({ error: "No report found with this ID" });
     }

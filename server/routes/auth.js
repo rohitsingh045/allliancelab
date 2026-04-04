@@ -31,8 +31,11 @@ router.post("/signup", async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Name, email, and password are required" });
+    if (!name || !email || !password || !phone) {
+      return res.status(400).json({ error: "Name, email, phone, and password are required" });
+    }
+    if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+      return res.status(400).json({ error: "Phone number must be exactly 10 digits" });
     }
     if (password.length < 6) {
       return res.status(400).json({ error: "Password must be at least 6 characters" });
@@ -44,7 +47,7 @@ router.post("/signup", async (req, res) => {
     }
 
     const { salt, hash } = User.hashPassword(password);
-    const user = new User({ name, email, phone: phone || "", passwordHash: hash, salt });
+    const user = new User({ name, email, phone, passwordHash: hash, salt });
     await user.save();
 
     const token = createToken({ userId: user._id, email: user.email, role: user.role });

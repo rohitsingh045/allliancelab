@@ -1,19 +1,37 @@
 import { X } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
+import QRCode from "react-qr-code";
 
 const SampleReportModal = ({ report, onClose }) => {
   const { t } = useLang();
   if (!report) return null;
 
+  // Generate a mock URL or real URL to open this specific report based on its ID
+  const reportUrl = `${window.location.origin}/download-report?id=${report._id || 'sample'}`;
+
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/40 pt-6 md:pt-12 overflow-y-auto pb-6">
       <div className="bg-card rounded-xl shadow-elevated w-full max-w-4xl mx-4">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-border">
-          <h2 className="text-lg font-heading font-bold text-primary">{t.sampleReportTitle} — {report.title}</h2>
-          <button onClick={onClose} className="p-1 text-muted-foreground hover:text-foreground transition-colors">
-            <X className="w-6 h-6" />
-          </button>
+        <div className="flex items-start justify-between p-5 border-b border-border">
+          <div>
+            <h2 className="text-xl font-heading font-bold text-primary mb-2">{t.sampleReportTitle} — {report.title}</h2>
+            <p className="text-sm text-muted-foreground">Scan QR to view/download this specific report directly</p>
+          </div>
+          <div className="flex items-start gap-4">
+            <div className="p-2 bg-white rounded-lg border border-border shadow-sm">
+              <QRCode 
+                value={reportUrl} 
+                size={100} 
+                fgColor="#000000" 
+                bgColor="#ffffff"
+                level="H"
+              />
+            </div>
+            <button onClick={onClose} className="p-1 text-muted-foreground hover:text-foreground transition-colors">
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         <div className="p-5 space-y-5">

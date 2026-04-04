@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLang } from "@/context/LanguageContext";
+import QRCode from "react-qr-code";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -235,21 +236,31 @@ const MyReports = () => {
                           </div>
 
                           {item.hasReport ? (
-                            <Button
-                              size="sm"
-                              onClick={() =>
-                                handleDownload(order._id, item.index, item.reportFileName)
-                              }
-                              disabled={downloading === `${order._id}-${item.index}`}
-                              className="bg-gradient-primary text-white gap-1.5 rounded-lg shadow-sm"
-                            >
-                              {downloading === `${order._id}-${item.index}` ? (
-                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                              ) : (
-                                <Download className="w-3.5 h-3.5" />
-                              )}
-                              {t.download}
-                            </Button>
+                            <div className="flex items-center gap-4">
+                              <div className="p-1.5 bg-white rounded border border-border">
+                                <QRCode 
+                                  value={`${window.location.origin}/download-report?id=${order._id}-${item.index}`}
+                                  size={48} 
+                                  fgColor="#000000" 
+                                  level="L"
+                                />
+                              </div>
+                              <Button
+                                size="sm"
+                                onClick={() =>
+                                  handleDownload(order._id, item.index, item.reportFileName)
+                                }
+                                disabled={downloading === `${order._id}-${item.index}`}
+                                className="bg-gradient-primary text-white gap-1.5 rounded-lg shadow-sm"
+                              >
+                                {downloading === `${order._id}-${item.index}` ? (
+                                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                ) : (
+                                  <Download className="w-3.5 h-3.5" />
+                                )}
+                                {t.download}
+                              </Button>
+                            </div>
                           ) : (
                             <span className="flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
                               <AlertCircle className="w-3.5 h-3.5" />
