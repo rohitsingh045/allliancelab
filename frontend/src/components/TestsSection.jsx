@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Clock, FileText, ShoppingCart, Beaker } from "lucide-react";
+import { Search, Clock, FileText, ShoppingCart, Beaker, CheckCircle2, Shield, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fetchTests, fetchCategories, fetchSampleReports } from "@/api/client.js";
 import SampleReportModal from "@/components/SampleReportModal.jsx";
@@ -152,124 +152,135 @@ const TestsSection = () => {
         </div>
 
         {/* Tests Grid */}
-        {/* Tests Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredTests.map((test) => (
             <div
               key={test._id}
-              className="bg-card rounded-2xl border border-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 flex flex-col"
+              className="group bg-card rounded-3xl border border-border/60 hover:border-primary/40 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col overflow-hidden w-full max-w-sm mx-auto relative"
             >
+              {/* Subtle top gradient line */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary/60 to-transparent opacity-60 group-hover:opacity-100 transition-opacity"></div>
+
               {/* Top content */}
-              <div className="p-5 pb-0 flex-1 flex flex-col">
+              <div className="p-5 px-6 pb-4 flex-1 flex flex-col z-10 relative">
                 {/* Category + Report Time row */}
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-primary border border-primary/30 bg-primary/5 px-3 py-1 rounded-full">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[11px] font-bold tracking-wider uppercase text-primary border border-primary/20 bg-primary/5 px-2.5 py-1 rounded-md">
                     {test.category}
                   </span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" />
+                  <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5 bg-secondary/80 px-2.5 py-1 rounded-md">
+                    <Clock className="w-3.5 h-3.5 text-primary/80" />
                     {test.reportTime}
                   </span>
                 </div>
 
                 {/* Test Name (editable for admin) */}
                 {user?.role === "admin" && editingTestId === test._id ? (
-                  <>
-                    <input
-                      type="text"
-                      name="name"
-                      value={editForm.name}
-                      onChange={handleEditChange}
-                      className="mb-2 px-2 py-1 border rounded w-full"
-                    />
-                  </>
+                  <input
+                    type="text"
+                    name="name"
+                    value={editForm.name}
+                    onChange={handleEditChange}
+                    className="mb-4 px-3 py-2 border border-border/80 bg-secondary/30 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-primary/50 text-base font-semibold"
+                  />
                 ) : (
-                  <h3 className="font-heading font-bold text-foreground text-base md:text-lg mb-4 leading-snug">
+                  <h3 className="font-heading font-extrabold text-foreground text-[1.1rem] leading-snug mb-5 decoration-primary/30 decoration-2 group-hover:underline overflow-hidden text-ellipsis line-clamp-2 min-h-[2.8rem]">
                     {test.name}
                   </h3>
                 )}
 
-                {/* Parameters */}
-                <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">{t.parameters}</span>
-                  <span className="font-semibold text-foreground">{test.parameters}</span>
-                </div>
-
-                {/* Pre-requisites */}
-                <div className="flex items-center justify-between text-sm mb-4">
-                  <span className="text-muted-foreground">{t.prerequisites}</span>
-                  <span className="font-medium text-foreground text-right text-xs max-w-[55%]">
-                    {test.prerequisites}
-                  </span>
+                {/* Details box - More stylish parameter/prerequisite area */}
+                <div className="mt-auto space-y-3 bg-gradient-to-b from-secondary/40 to-secondary/10 rounded-2xl p-4 border border-border/40">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] text-muted-foreground flex items-center gap-2 font-medium">
+                      <Activity className="w-4 h-4 text-primary/70" />
+                      {t.parameters || "Parameters"}
+                    </span>
+                    <span className="font-bold text-foreground text-sm bg-background px-2.5 py-0.5 rounded shadow-sm border border-border/50">
+                      {test.parameters}
+                    </span>
+                  </div>
+                  
+                  <div className="h-px w-full bg-border/50 rounded-full" />
+                  
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-[13px] text-muted-foreground flex items-center gap-2 font-medium whitespace-nowrap">
+                      <Shield className="w-4 h-4 text-primary/70 shrink-0" />
+                      {t.prerequisites || "Pre-requisites"}
+                    </span>
+                    <span className="font-semibold text-foreground text-right text-[12px] leading-tight flex-1">
+                      {test.prerequisites || "No fasting required"}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Divider + Footer */}
-              <div className="border-t border-border mx-5" />
-              <div className="px-5 py-4 flex items-center justify-between">
-                {/* Price (editable for admin) */}
-                {user?.role === "admin" && editingTestId === test._id ? (
-                  <input
-                    type="number"
-                    name="price"
-                    value={editForm.price}
-                    onChange={handleEditChange}
-                    className="mr-2 px-2 py-1 border rounded w-24"
-                  />
-                ) : (
-                  <span className="text-2xl font-heading font-extrabold text-foreground">
-                    ₹{test.price}
-                  </span>
-                )}
-                <div className="flex items-center gap-3">
+              {/* Enhanced Footer section */}
+              <div className="bg-secondary/20 p-5 px-6 border-t border-border/40 flex items-center justify-between">
+                <div className="flex flex-col">
+                  {user?.role === "admin" && editingTestId === test._id ? (
+                    <input
+                      type="number"
+                      name="price"
+                      value={editForm.price}
+                      onChange={handleEditChange}
+                      className="px-2 py-1 border border-border/80 bg-background rounded-lg w-24 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                  ) : (
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-xl font-heading font-extrabold text-foreground">₹{test.price}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => setSelectedReportTestId(test._id)}
-                    className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
+                    className="p-2 text-primary bg-primary/5 hover:bg-primary/10 rounded-xl transition-colors shrink-0"
+                    title={t.sample || "Sample Report"}
                   >
-                    <FileText className="w-3.5 h-3.5" />
-                    {t.sample}
+                    <FileText className="w-4 h-4" />
                   </button>
+
                   {user?.role === "admin" ? (
                     editingTestId === test._id ? (
-                      <>
-                        <Button size="sm" className="bg-green-600 text-white mr-2" onClick={() => handleEditSave(test._id)}>
+                      <div className="flex gap-2">
+                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-sm px-3" onClick={() => handleEditSave(test._id)}>
                           Save
                         </Button>
-                        <Button size="sm" variant="outline" onClick={handleEditCancel}>
+                        <Button size="sm" variant="outline" className="rounded-xl px-3 border-border/80" onClick={handleEditCancel}>
                           Cancel
                         </Button>
-                      </>
+                      </div>
                     ) : (
-                      <Button size="sm" className="bg-blue-600 text-white" onClick={() => handleEditClick(test)}>
+                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm px-4" onClick={() => handleEditClick(test)}>
                         Edit
                       </Button>
                     )
                   ) : (
                     isInCart(test._id, "test") ? (
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="icon"
-                          className="bg-gradient-primary text-primary-foreground font-bold px-2 py-1"
+                      <div className="flex items-center gap-1.5 bg-background border border-primary/20 rounded-xl p-1 shadow-sm">
+                        <button
+                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
                           onClick={() => handleDecrement(test)}
                         >
-                          -
-                        </Button>
-                        <span className="font-semibold text-lg px-2">{getQuantity(test._id, "test")}</span>
-                        <Button
-                          size="icon"
-                          className="bg-gradient-primary text-primary-foreground font-bold px-2 py-1"
+                          <span className="font-bold leading-none select-none text-lg mt-[-2px]">-</span>
+                        </button>
+                        <span className="font-bold text-sm w-5 text-center">{getQuantity(test._id, "test")}</span>
+                        <button
+                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors"
                           onClick={() => handleAddToCart(test)}
                         >
-                          +
-                        </Button>
+                          <span className="font-bold leading-none select-none text-lg mt-[-2px]">+</span>
+                        </button>
                       </div>
                     ) : (
                       <Button
                         size="sm"
                         onClick={() => handleAddToCart(test)}
-                        className="font-semibold rounded-lg px-4 bg-gradient-primary hover:opacity-90 text-primary-foreground"
+                        className="font-bold rounded-xl px-5 transition-transform active:scale-95 bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20"
                       >
-                        <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                        <ShoppingCart className="w-4 h-4 mr-1.5" />
                         {t.add}
                       </Button>
                     )

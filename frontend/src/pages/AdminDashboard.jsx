@@ -6,7 +6,7 @@ import {
   CheckCircle2, XCircle, ChevronDown, Search,
   Phone, Mail, Calendar, User as UserIcon, FlaskConical, Microscope,
   Activity, TestTubes, HeartPulse, Droplets, Upload, FileImage, Eye,
-  FileUp, Trash2, ClipboardCopy, Hash, Home, MapPin
+  FileUp, Trash2, ClipboardCopy, Hash, Home, MapPin, Plus
 } from "lucide-react";
 import NotificationBell from "@/components/NotificationBell";
 import { useLang } from "@/context/LanguageContext";
@@ -72,6 +72,14 @@ const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [updatingBooking, setUpdatingBooking] = useState(null);
   const [deletingUser, setDeletingUser] = useState(null);
+  
+  // Tests Management
+  const [testsList, setTestsList] = useState([]);
+  const [loadingTests, setLoadingTests] = useState(false);
+  const [isAddingTest, setIsAddingTest] = useState(false);
+  const [newTest, setNewTest] = useState({
+    name: "", price: "", parameters: "", reportTime: "", prerequisites: "", category: "", sampleReportUrl: ""
+  });
 
   const token = localStorage.getItem("auth_token");
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
@@ -121,6 +129,54 @@ const AdminDashboard = () => {
   }, [token, navigate]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+    if (activeTab === "manage-tests" && testsList.length === 0) {
+      fetchTestsList();
+    }
+  }, [activeTab, testsList.length]);
+
+  const fetchTestsList = async () => {
+    setLoadingTests(true);
+    try {
+      const res = await fetch(`${API_BASE}/tests`);
+      if (res.ok) {
+        setTestsList(await res.json());
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingTests(false);
+    }
+  };
+
+  const handleAddTest = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API_BASE}/tests`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...newTest,
+          price: Number(newTest.price),
+          parameters: Number(newTest.parameters)
+        }),
+      });
+      if (res.ok) {
+        const created = await res.json();
+        setTestsList([...testsList, created]);
+        setIsAddingTest(false);
+        setNewTest({ name: "", price: "", parameters: "", reportTime: "", prerequisites: "", category: "", sampleReportUrl: "" });
+        alert("Test added successfully!");
+      } else {
+        const errData = await res.json();
+        alert(errData.message || "Failed to add test");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error while adding test");
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("auth_token");
@@ -546,6 +602,16 @@ const AdminDashboard = () => {
             }`}
           >
             <Home className="w-3.5 h-3.5" /> {t.homeBookings} ({bookings.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("manage-tests")}
+            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-1.5 ${
+              activeTab === "manage-tests"
+                ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-md shadow-teal-200"
+                : "bg-white/80 backdrop-blur-sm text-teal-700 hover:bg-white border border-teal-100"
+            }`}
+          >
+            <FlaskConical className="w-3.5 h-3.5" /> Manage Tests
           </button>
           <button
             onClick={fetchData}
@@ -1420,6 +1486,143 @@ const AdminDashboard = () => {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Manage Tests Tab */}
+        {activeTab === "manage-tests" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center">
+                  <FlaskConical className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Manage Tests</h2>
+                  <p className="text-xs text-teal-500">Create and manage lab tests</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsAddingTest(!isAddingTest)}
+                className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all shadow-md shadow-teal-200"
+              >
+                {isAddingTest ? <XCircle className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                {isAddingTest ? "Cancel" : "Add New Test"}
+              </button>
+            </div>
+
+            {isAddingTest && (
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-teal-100 p-6 shadow-sm mb-6">
+                <h3 className="font-bold text-slate-800 mb-4 text-sm uppercase tracking-wide">Add a New Lab Test</h3>
+                <form onSubmit={handleAddTest} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600">Test Name</label>
+                    <input 
+                      type="text" required value={newTest.name} onChange={(e) => setNewTest({...newTest, name: e.target.value})}
+                      className="w-full px-3 py-2 rounded-xl border border-teal-100 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-300"
+                      placeholder="e.g. Complete Blood Count (CBC)"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600">Price (₹)</label>
+                    <input 
+                      type="number" required min="0" value={newTest.price} onChange={(e) => setNewTest({...newTest, price: e.target.value})}
+                      className="w-full px-3 py-2 rounded-xl border border-teal-100 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-300"
+                      placeholder="e.g. 500"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600">Number of Parameters</label>
+                    <input 
+                      type="number" required min="1" value={newTest.parameters} onChange={(e) => setNewTest({...newTest, parameters: e.target.value})}
+                      className="w-full px-3 py-2 rounded-xl border border-teal-100 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-300"
+                      placeholder="e.g. 24"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600">Report Time</label>
+                    <input 
+                      type="text" required value={newTest.reportTime} onChange={(e) => setNewTest({...newTest, reportTime: e.target.value})}
+                      className="w-full px-3 py-2 rounded-xl border border-teal-100 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-300"
+                      placeholder="e.g. 24 Hours or Same Day"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600">Prerequisites</label>
+                    <input 
+                      type="text" required value={newTest.prerequisites} onChange={(e) => setNewTest({...newTest, prerequisites: e.target.value})}
+                      className="w-full px-3 py-2 rounded-xl border border-teal-100 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-300"
+                      placeholder="e.g. Fasting for 10-12 hours"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600">Category</label>
+                    <input 
+                      type="text" required value={newTest.category} onChange={(e) => setNewTest({...newTest, category: e.target.value})}
+                      className="w-full px-3 py-2 rounded-xl border border-teal-100 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-300"
+                      placeholder="e.g. Blood Tests"
+                    />
+                  </div>
+                  <div className="space-y-1.5 md:col-span-2">
+                    <label className="text-xs font-semibold text-slate-600">Sample Report URL (Optional)</label>
+                    <input 
+                      type="url" value={newTest.sampleReportUrl} onChange={(e) => setNewTest({...newTest, sampleReportUrl: e.target.value})}
+                      className="w-full px-3 py-2 rounded-xl border border-teal-100 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-300"
+                      placeholder="https://example.com/sample.pdf"
+                    />
+                  </div>
+                  <div className="md:col-span-2 flex justify-end mt-2">
+                    <button type="submit" className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all shadow-md shadow-teal-200">
+                      Save Test
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {loadingTests ? (
+              <div className="text-center py-10">
+                <RefreshCw className="w-8 h-8 text-teal-400 animate-spin mx-auto mb-3" />
+                <p className="text-sm text-slate-500">Loading tests...</p>
+              </div>
+            ) : testsList.length === 0 ? (
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 p-10 text-center shadow-sm">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center mx-auto mb-3">
+                  <FlaskConical className="w-8 h-8 text-teal-300" />
+                </div>
+                <p className="text-slate-600 font-medium">No tests found</p>
+                <p className="text-sm text-teal-400 mt-1">Start by adding a new lab test</p>
+              </div>
+            ) : (
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-teal-100 shadow-sm overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-600">
+                    <tr>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Test Name</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Category</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Price</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Parameters</th>
+                      <th className="text-left px-5 py-3 font-semibold text-xs uppercase tracking-wider">Report Time</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-teal-50">
+                    {testsList.map((test) => (
+                      <tr key={test._id} className="hover:bg-teal-50/50 transition-colors">
+                        <td className="px-5 py-3.5 font-medium text-slate-700">{test.name}</td>
+                        <td className="px-5 py-3.5">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800 border border-teal-200">
+                            {test.category}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3.5 font-semibold text-teal-600">₹{test.price}</td>
+                        <td className="px-5 py-3.5 text-slate-500">{test.parameters} params</td>
+                        <td className="px-5 py-3.5 text-slate-500">{test.reportTime}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
