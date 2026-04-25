@@ -24,7 +24,7 @@ import jobApplicationRoutes from "./routes/jobApplications.js";
 dotenv.config({ path: join(__dirname, ".env") });
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // ── Allowed origins ────────────────────────────────────────────────────
 const ALLOWED_ORIGINS = [
@@ -36,6 +36,8 @@ const ALLOWED_ORIGINS = [
   "http://localhost:5173",
   "http://localhost:3000",
   "http://localhost:4173",
+  "http://localhost:8080",
+  "http://localhost:8081",
 ];
 
 const corsOptions = {
@@ -46,7 +48,9 @@ const corsOptions = {
       o instanceof RegExp ? o.test(origin) : o === origin
     );
     if (allowed) return callback(null, true);
-    return callback(new Error(`CORS blocked: ${origin}`));
+    
+    // Instead of throwing an error that crashes nodemon, deny CORS gracefully
+    return callback(null, false);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],

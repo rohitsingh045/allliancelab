@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { X, Send, Briefcase, Phone, Mail, User, MessageSquare, ChevronDown, CheckCircle } from "lucide-react";
 import allianceLogo from "@/assets/logo.png";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5005/api";
 
 // ── The actual hiring image (base64 embedded so no file-hosting needed) ──────
 // Replace the src below with "/ad-hiring.jpg" once you copy your image to /public
-const AD_IMAGE_SRC = "/ad-hiring.jpg";
+const AD_IMAGE_SRC = "/ad-hiring.jpeg";
 
 const POSITIONS = ["Front Desk Executive", "Telecaller", "Other"];
 

@@ -1,6 +1,6 @@
 import express from "express";
 import JobApplication from "../models/JobApplication.js";
-import jwt from "jsonwebtoken";
+import { verifyToken } from "../lib/authHelpers.js";
 
 const router = express.Router();
 
@@ -9,8 +9,10 @@ const adminAuth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "Unauthorized" });
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded.isAdmin) return res.status(403).json({ error: "Forbidden" });
+    const decoded = verifyToken(token);
+    if (!decoded || decoded.role !== "admin") {
+      return res.status(403).json({ error: "Forbidden" });
+    }
     req.admin = decoded;
     next();
   } catch {
