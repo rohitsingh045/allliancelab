@@ -169,30 +169,25 @@ export default function HeroSection() {
 
         {/* ── SLIDE 2 : Hiring Ad ────────────────────────────── */}
         <div
-          style={{ width: `${100 / TOTAL}%`, height: "100%", flexShrink: 0, position: "relative", cursor: showJob ? "default" : "pointer", background: "#fff", overflowY: "auto" }}
+          style={{ width: `${100 / TOTAL}%`, height: "100%", flexShrink: 0, position: "relative", cursor: showJob ? "default" : "pointer" }}
           onClick={() => { if (!showJob) setShowJob(true); }}
         >
           {!showJob ? (
-            /* full ad image — top aligned, no crop */
-            <div style={{ width: "100%", height: "100%", overflowY: "auto", position: "relative", background: "#fff" }}>
-              <img
-                src={AD_IMAGE}
-                alt="Alliance Diagnostic – We Are Hiring!"
-                style={{ width: "100%", height: "auto", display: "block" }}
-                draggable={false}
-              />
+            /* full ad image */
+            <>
+              <img src={AD_IMAGE} alt="Alliance Diagnostic – We Are Hiring!" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block", background: "#ffffff" }} draggable={false} />
               {/* pulsing badge */}
               <div style={{
-                position: "sticky", bottom: 16, left: "50%", transform: "translateX(-50%)",
+                position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)",
                 background: "linear-gradient(135deg,#7c3aed,#4f46e5)", color: "#fff",
                 fontWeight: 700, fontSize: "0.9rem", padding: "10px 28px", borderRadius: 50,
                 boxShadow: "0 6px 28px rgba(79,70,229,0.55)", border: "2px solid rgba(255,255,255,0.3)",
-                whiteSpace: "nowrap", pointerEvents: "none", width: "fit-content", margin: "-44px auto 16px",
+                whiteSpace: "nowrap", pointerEvents: "none",
                 animation: "heroPulse 2s ease-in-out infinite",
               }}>
                 🚀 Click to Apply Now!
               </div>
-            </div>
+            </>
           ) : (
             /* job application form overlay */
             <div
