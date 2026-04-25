@@ -103,7 +103,7 @@ const Header = () => {
           </div>
 
           {/* Search */}
-          <div className="hidden md:flex flex-1 max-w-md relative">
+          {/* <div className="hidden md:flex flex-1 max-w-md relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
@@ -112,7 +112,7 @@ const Header = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
             />
-          </div>
+          </div> */}
 
           {/* Actions */}
           <div className="flex items-center gap-2">
