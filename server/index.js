@@ -19,6 +19,7 @@ import adminRoutes from "./routes/admin.js";
 import prescriptionRoutes from "./routes/prescriptions.js";
 import reportRoutes from "./routes/reports.js";
 import notificationRoutes from "./routes/notifications.js";
+import jobApplicationRoutes from "./routes/jobApplications.js";
 
 dotenv.config({ path: join(__dirname, ".env") });
 
@@ -67,6 +68,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/job-applications", jobApplicationRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

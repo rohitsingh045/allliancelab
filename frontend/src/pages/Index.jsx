@@ -6,10 +6,13 @@ import TestsSection from "@/components/TestsSection.jsx";
 import HealthPackages from "@/components/HealthPackages.jsx";
 import WhyChooseUs from "@/components/WhyChooseUs.jsx";
 import Footer from "@/components/Footer.jsx";
+import AdPopup from "@/components/AdPopup.jsx";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      {/* Ad popup shown on first visit of the session */}
+      <AdPopup />
       <Header />
       <HeroSection />
       <QuickActions />
